@@ -1,0 +1,73 @@
+apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "com.facebook.react"
+
+react {
+    autolinkLibrariesWithApp()
+}
+
+def enableProguardInReleaseBuilds = false
+
+android {
+    ndkVersion rootProject.ext.ndkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdk rootProject.ext.compileSdkVersion
+
+    namespace "com.alisverisasistani"
+
+    defaultConfig {
+        // Play Store kimliği: ilk yüklemeden sonra değiştirilemez. Kod paketi (namespace) ayrıdır.
+        applicationId "tr.bak"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0.0"   // src/sabitler.ts SURUM ile aynı tutulmalı
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+        // Yayın imzası bilgileri depoda değil, kullanıcının ~/.gradle/gradle.properties dosyasındadır
+        // (BAK_YAYIN_KEYSTORE, BAK_YAYIN_ALIAS, BAK_YAYIN_SIFRE). Yoksa deneme anahtarıyla imzalanır.
+        release {
+            if (project.hasProperty('BAK_YAYIN_KEYSTORE')) {
+                storeFile file(BAK_YAYIN_KEYSTORE)
+                storePassword BAK_YAYIN_SIFRE
+                keyAlias BAK_YAYIN_ALIAS
+                keyPassword BAK_YAYIN_SIFRE
+            } else {
+                storeFile file('debug.keystore')
+                storePassword 'android'
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+
+    packagingOptions {
+        pickFirst 'lib/x86/libc++_shared.so'
+        pickFirst 'lib/x86_64/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+    }
+}
+
+dependencies {
+    implementation("com.facebook.react:react-android")
+    implementation("com.facebook.react:hermes-android")
+}

@@ -1,0 +1,24 @@
+1
+00:00:00,300 --> 00:00:04,800
+Hastane girişindeki QR etiketini
+telefonla okutuyorum.
+
+2
+00:00:05,000 --> 00:00:08,000
+[Uygulama] Burada 7 yer var:
+1, Danışma…
+
+3
+00:00:08,000 --> 00:00:10,800
+BAK binadaki yerleri sayıyor;
+“kardiyoloji” diyorum.
+
+4
+00:00:11,000 --> 00:00:16,600
+Adımlarımı sayıp dönüşleri
+ve asansörü söylüyor.
+
+5
+00:00:17,000 --> 00:00:19,800
+BAK: görmeden de,
+sormadan da yolunu bul.

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BAK</string>
+    <string name="whatsapp_yardimcisi_aciklama">BAK WhatsApp yardımcısı, siz "canlı konumumu paylaş" dediğinizde WhatsApp\'ta ataç, Konum, Canlı konumu paylaş ve Gönder düğmelerine sizin yerinize basar. Yalnızca WhatsApp ekranını görür, yalnızca bu komutla çalışır; ekrandaki hiçbir bilgiyi kaydetmez ya da göndermez.</string>
+</resources>

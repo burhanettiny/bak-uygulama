@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mekân QR Etiketleri</title>
+<!-- Örnek mekânlar (src/mekan/veri/*.json) için yazdırılabilir QR etiketleri.
+     Girişe BAK:MEKAN, her noktaya BAK:NOKTA etiketi asılır. Tarayıcıda açıp yazdırın. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 24px; color: #111; background: #fff; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 17px; margin: 28px 0 12px; break-before: page; }
+  h2:first-of-type { break-before: auto; }
+  p { margin: 0 0 20px; color: #555; font-size: 14px; }
+  .izgara { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .etiket { border: 2px dashed #999; border-radius: 8px; padding: 16px; text-align: center; break-inside: avoid; }
+  .etiket svg { width: 160px; height: 160px; }
+  .ad { font-size: 18px; font-weight: bold; margin-top: 8px; }
+  .kod { font-family: monospace; font-size: 11px; color: #666; margin-top: 4px; word-break: break-all; }
+  .giris { border-color: #1e88e5; border-style: solid; }
+  @media print { p { display: none; } body { margin: 8mm; } }
+</style>
+</head>
+<body>
+<h1>Mekân QR Etiketleri</h1>
+<p>Etiketleri sabit bir yüksekliğe (ör. 120 cm) ve kabartma bir çerçeveyle asın ki görme engelli kullanıcı elle bulabilsin.
+   Mavi çerçeveli etiket binanın girişine asılır. Her mekân yeni sayfadan başlar.</p>
+<div id="mekanlar"></div>
+<script>
+  const mekanlar = [
+    {id: 'ornek-market', ad: 'Örnek Market', noktalar: [
+      ['k1', '1. koridor — Meyve Sebze'], ['k2', '2. koridor — Ekmek ve Fırın'],
+      ['k3', '3. koridor — Süt Ürünleri'], ['k4', '4. koridor — Et Ürünleri'],
+      ['k5', '5. koridor — İçecek'], ['k6', '6. koridor — Temizlik ve Kozmetik'], ['kasa', 'Kasalar'],
+    ]},
+    {id: 'ornek-hastane', ad: 'Örnek Devlet Hastanesi', noktalar: [
+      ['danisma', 'Zemin — Danışma'], ['z-koridor', 'Zemin — Koridor başı'], ['vezne', 'Zemin — Vezne'],
+      ['lab', 'Zemin — Laboratuvar'], ['merdiven-0', 'Zemin — Merdiven başı'], ['asansor-0', 'Zemin — Asansör önü'],
+      ['merdiven-1', '1. kat — Merdiven başı'], ['asansor-1', '1. kat — Asansör önü'],
+      ['k1-koridor', '1. kat — Poliklinikler koridoru'], ['kardiyoloji', '1. kat — Kardiyoloji (112)'],
+      ['dahiliye', '1. kat — Dahiliye (118)'], ['goz', '1. kat — Göz (124)'],
+    ]},
+  ];
+
+  const kapsayici = document.getElementById('mekanlar');
+  for (const m of mekanlar) {
+    const baslik = document.createElement('h2');
+    baslik.textContent = m.ad;
+    const izgara = document.createElement('div');
+    izgara.className = 'izgara';
+    kapsayici.append(baslik, izgara);
+
+    const etiketler = [
+      {kod: `BAK:MEKAN:${m.id}`, ad: 'GİRİŞ', giris: true},
+      ...m.noktalar.map(([id, ad]) => ({kod: `BAK:NOKTA:${m.id}:${id}`, ad})),
+    ];
+    for (const e of etiketler) {
+      const qr = qrcode(0, 'M');
+      qr.addData(e.kod);
+      qr.make();
+      const kutu = document.createElement('div');
+      kutu.className = 'etiket' + (e.giris ? ' giris' : '');
+      kutu.innerHTML = qr.createSvgTag({cellSize: 4, margin: 2}) +
+        `<div class="ad">${e.ad}</div><div class="kod">${e.kod}</div>`;
+      izgara.appendChild(kutu);
+    }
+  }
+</script>
+</body>
+</html>

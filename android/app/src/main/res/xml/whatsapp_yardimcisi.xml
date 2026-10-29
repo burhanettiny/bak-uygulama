@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Yalnızca WhatsApp ekranlarını görür; BAK görev vermedikçe hiçbir şeye dokunmaz -->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:packageNames="com.whatsapp,com.whatsapp.w4b"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagReportViewIds|flagRetrieveInteractiveWindows"
+    android:canRetrieveWindowContent="true"
+    android:notificationTimeout="200"
+    android:isAccessibilityTool="true"
+    android:description="@string/whatsapp_yardimcisi_aciklama" />

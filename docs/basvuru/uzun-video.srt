@@ -1,0 +1,376 @@
+1
+00:00:00,500 --> 00:00:06,261
+[Betimleme] Ekranda lacivert zemin
+üzerinde sarı bir göz ve ses dalgalarından
+
+2
+00:00:06,261 --> 00:00:07,907
+oluşan BAK logosu var.
+
+3
+00:00:08,507 --> 00:00:11,174
+Merhaba. Ben Burhanettin Yalçınkaya.
+
+4
+00:00:11,774 --> 00:00:17,625
+Bu video, görme engelli bireyler için
+geliştirdiğim BAK uygulamasını tanıtıyor.
+
+5
+00:00:18,225 --> 00:00:23,834
+BAK'ın amacı tek cümle: telefonun kamerası
+görür, uygulama sesle anlatır ve
+
+6
+00:00:23,834 --> 00:00:26,077
+kullanıcıyı adım adım götürür.
+
+7
+00:00:26,677 --> 00:00:32,512
+[Betimleme] Kullanıcı rafta iki benzer
+kutuyu eline alıyor, hangisinin hangisi
+
+8
+00:00:32,512 --> 00:00:34,307
+olduğunu ayırt edemiyor.
+
+9
+00:00:34,907 --> 00:00:40,811
+Görme engelli bir birey markette ürünü,
+son kullanma tarihini ya da parayı çoğu
+
+10
+00:00:40,811 --> 00:00:43,203
+zaman başkasına sorarak öğrenir.
+
+11
+00:00:43,803 --> 00:00:47,803
+Hastanede polikliniği, AVM'de mağazayı
+bulmak da öyle.
+
+12
+00:00:48,403 --> 00:00:51,737
+GPS bina içinde çalışmaz; levhalar
+görseldir.
+
+13
+00:00:52,337 --> 00:00:57,654
+[Betimleme] Ekranda büyük, yüksek
+kontrastlı butonlar var: sesli komut,
+
+14
+00:00:57,654 --> 00:00:59,077
+barkod, yol tarifi.
+
+15
+00:00:59,677 --> 00:01:01,974
+BAK ekrana bakmadan kullanılır.
+
+16
+00:01:02,574 --> 00:01:08,259
+Bir dokunuş susturur ya da son sonucu
+tekrarlar, iki dokunuş barkod okur, üç
+
+17
+00:01:08,259 --> 00:01:10,129
+dokunuş yol tarifi ister.
+
+18
+00:01:10,729 --> 00:01:13,618
+Uzun basıp ne istediğinizi söylersiniz.
+
+19
+00:01:14,218 --> 00:01:20,285
+Uygulama TalkBack ile uyumludur ve ilk
+açılışta bu hareketleri sesli bir eğitimle
+
+20
+00:01:20,285 --> 00:01:20,885
+öğretir.
+
+21
+00:01:21,485 --> 00:01:27,411
+[Betimleme] Telefon titreşiyor; ekranda
+ürün kartı ve alerjen uyarısı beliriyor.
+
+22
+00:01:28,011 --> 00:01:30,825
+Şimdi bir ürünün barkodunu okutuyorum.
+
+23
+00:01:31,425 --> 00:01:35,944
+Barkod kameranın kenarında kalınca
+uygulama yön tarif ediyor.
+
+24
+00:01:36,544 --> 00:01:40,914
+[Uygulama sesi] Kod görünüyor. Telefonu
+biraz sola çevirin.
+
+25
+00:01:41,514 --> 00:01:45,885
+Okununca ürünün adını, markasını ve
+alerjenlerini söylüyor.
+
+26
+00:01:46,485 --> 00:01:51,818
+Okunan ürün telefona kaydedilir; aynı ürün
+sonra internetsiz de bulunur.
+
+27
+00:01:52,418 --> 00:01:58,187
+[Betimleme] Ambalajın üst kenarında küçük
+yazıyla basılmış tarih yakın planda
+
+28
+00:01:58,187 --> 00:01:58,937
+görülüyor.
+
+29
+00:01:59,537 --> 00:02:04,574
+Son kullanma tarihini uygulama kendisi
+bulur; tarih geçmişse uyarır.
+
+30
+00:02:05,174 --> 00:02:10,507
+Banknotun değerini ve kasadaki POS
+cihazının ekranındaki tutarı da okur.
+
+31
+00:02:11,107 --> 00:02:15,625
+[Betimleme] Ekranda iki maddelik alışveriş
+listesi görülüyor.
+
+32
+00:02:16,225 --> 00:02:18,299
+“Listeye süt ve ekmek ekle.”
+
+33
+00:02:18,899 --> 00:02:24,233
+Mağazaya girince uygulama listedeki
+ürünleri en kısa sırayla gezdiriyor.
+
+34
+00:02:24,833 --> 00:02:30,895
+[Betimleme] Etiket kapının sağında, göğüs
+hizasında; üzerinde büyük bir QR kod ve
+
+35
+00:02:30,895 --> 00:02:32,018
+BAK yazısı var.
+
+36
+00:02:32,618 --> 00:02:37,285
+Bina içinde yol bulmak için girişteki BAK
+etiketini okutuyorum.
+
+37
+00:02:37,885 --> 00:02:43,811
+[Uygulama sesi] Hoş geldiniz. Burada 7 yer
+var. Zemin kat: 1, Danışma; 2, Vezne…
+
+38
+00:02:44,411 --> 00:02:49,437
+Yerlerin adını bilmiyorum; uygulama
+sayıyor, ben numarayı ya da adı
+
+39
+00:02:49,437 --> 00:02:50,262
+söylüyorum.
+
+40
+00:02:50,862 --> 00:02:56,700
+“Poliklinik” dersem birden fazla sonuç
+olduğu için seçenekleri sayıp hangisini
+
+41
+00:02:56,700 --> 00:02:58,122
+istediğimi soruyor.
+
+42
+00:02:58,722 --> 00:03:04,858
+[Betimleme] Koridor zemininde yönlendirme
+yok; kullanıcı yalnızca telefondan gelen
+
+43
+00:03:04,858 --> 00:03:06,055
+sesle ilerliyor.
+
+44
+00:03:06,655 --> 00:03:12,433
+Uygulama adımlarımı sayıyor; dönüşü,
+merdiveni ve asansörü zamanında söylüyor.
+
+45
+00:03:13,033 --> 00:03:16,959
+Düz yürümem gereken yerde yönümden
+saparsam uyarıyor.
+
+46
+00:03:17,559 --> 00:03:23,100
+Yoldaki etiketleri okuttukça konumum
+düzeliyor ve uygulama adım uzunluğumu
+
+47
+00:03:23,100 --> 00:03:24,448
+kendisi öğreniyor.
+
+48
+00:03:25,048 --> 00:03:30,871
+[Betimleme] Telefon ekranında arama
+başlatılıyor; ardından mesaj uygulamasında
+
+49
+00:03:30,871 --> 00:03:34,603
+konum bağlantısı içeren hazır bir mesaj
+görülüyor.
+
+50
+00:03:35,203 --> 00:03:41,411
+Kaybolursam “kayboldum” diyorum; uygulama
+nerede olduğumu ve en yakın etiketi nasıl
+
+51
+00:03:41,411 --> 00:03:42,907
+bulacağımı söylüyor.
+
+52
+00:03:43,507 --> 00:03:47,803
+“Yardım çağır” dersem kayıtlı yakınımı tek
+komutla arıyor.
+
+53
+00:03:48,403 --> 00:03:54,028
+“Konumumu gönder” dersem bulunduğum bina,
+kat ve nokta, dışarıdaysam harita
+
+54
+00:03:54,028 --> 00:03:59,727
+bağlantısı acil kişime mesaj olarak
+hazırlanıyor; ben yalnızca gönder tuşuna
+
+55
+00:03:59,727 --> 00:04:00,477
+basıyorum.
+
+56
+00:04:01,077 --> 00:04:06,753
+[Betimleme] Ekranda bir marketin iki
+boyutlu planı var: giriş, dört koridor,
+
+57
+00:04:06,753 --> 00:04:10,188
+her koridorun solundaki ve sağındaki
+reyonlar.
+
+58
+00:04:10,788 --> 00:04:13,529
+BAK'ın yaygınlaşması kurumlara bağlı.
+
+59
+00:04:14,129 --> 00:04:20,186
+Hastane, market, AVM, okul ve belediyeler
+kendi BAK etiketlerini ücretsiz bir web
+
+60
+00:04:20,186 --> 00:04:22,055
+uygulamasıyla hazırlıyor.
+
+61
+00:04:22,655 --> 00:04:28,729
+Sihirbaza koridorda hangi birimin sağda,
+hangisinin solda olduğunu yazmak yeterli.
+
+62
+00:04:29,329 --> 00:04:34,485
+Uygulama binanın planını çiziyor,
+ziyaretçiye okunacak tarifi önceden
+
+63
+00:04:34,485 --> 00:04:37,848
+dinletiyor ve etiketleri tek sayfada
+basıyor.
+
+64
+00:04:38,448 --> 00:04:44,420
+Kurumun kendi hazırladığı binalar girişte
+doğrulanmadı diye duyuruluyor; böylece
+
+65
+00:04:44,420 --> 00:04:48,003
+yanlış yönlendirmeye karşı kullanıcı
+uyarılıyor.
+
+66
+00:04:48,603 --> 00:04:51,937
+[Betimleme] Ekranda dört satır yazı
+okunuyor.
+
+67
+00:04:52,537 --> 00:04:56,462
+BAK, ödülün dört katkı alanının dördüne de
+dokunuyor:
+
+68
+00:04:57,062 --> 00:05:02,591
+alışverişte bağımsızlıkla toplumsal ve
+ekonomik hayata katılım, hastane ve
+
+69
+00:05:02,591 --> 00:05:05,729
+belediyede kamu hizmetlerinden yararlanma,
+
+70
+00:05:06,329 --> 00:05:11,588
+okul binasında eğitime erişim, ürün ve
+tarih bilgisiyle bilgiye erişim.
+
+71
+00:05:12,188 --> 00:05:18,328
+[Betimleme] Ekranda uygulamanın Hakkında
+sayfası ve gizlilik politikası bağlantısı
+
+72
+00:05:18,328 --> 00:05:19,077
+görülüyor.
+
+73
+00:05:19,677 --> 00:05:25,364
+Uygulama hesap istemez, reklam ve takip
+içermez; bilgiler telefonda kalır ve
+
+74
+00:05:25,364 --> 00:05:27,085
+internetsiz de çalışır.
+
+75
+00:05:27,685 --> 00:05:33,893
+BAK bugün çalışan bir Android uygulaması;
+gerçek telefonda sahada denendi ve Google
+
+76
+00:05:33,893 --> 00:05:35,388
+Play'e hazırlanıyor.
+
+77
+00:05:35,988 --> 00:05:40,359
+[Test kullanıcısı ve pilot kurum bilgisini
+buraya ekleyin.]
+
+78
+00:05:40,959 --> 00:05:45,301
+[Betimleme] Ekranda iletişim adresi ve web
+sitesi yazıyor:
+
+79
+00:05:45,301 --> 00:05:47,996
+burhanettiny.github.io/bak-mekanlar.
+
+80
+00:05:48,596 --> 00:05:51,855
+BAK ile görmeden de, sormadan da yolunu
+bul.
+
+81
+00:05:52,455 --> 00:05:54,899
+İzlediğiniz için teşekkür ederim.

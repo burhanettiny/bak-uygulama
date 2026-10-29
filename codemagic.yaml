@@ -1,0 +1,40 @@
+# BAK iPhone sürümü: Mac olmadan Codemagic'in bulut Mac'inde derlenir ve TestFlight'a yüklenir.
+# Kurulum adımları: docs/iphone.md
+workflows:
+  ios-testflight:
+    name: BAK iPhone → TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      # Codemagic'te (Team → Integrations → Developer Portal) eklenen App Store Connect API anahtarının adı
+      app_store_connect: BAK App Store Connect
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: tr.bak
+      vars:
+        # App Store Connect → Uygulama → Uygulama Bilgileri → "Apple Kimliği" (yalnızca rakamlar)
+        APP_STORE_APPLE_ID: 0000000000
+      node: 22
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: JavaScript bağımlılıkları
+        script: npm ci
+      - name: iOS bağımlılıkları (CocoaPods)
+        script: cd ios && pod install --repo-update
+      - name: İmza profilleri
+        script: xcode-project use-profiles
+      - name: Yapı numarası (her yüklemede bir artar)
+        script: |
+          SON=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" || echo 0)
+          cd ios && agvtool new-version -all $((SON + 1))
+      - name: Derle (.ipa)
+        script: xcode-project build-ipa --workspace ios/AlisverisAsistani.xcworkspace --scheme AlisverisAsistani
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
