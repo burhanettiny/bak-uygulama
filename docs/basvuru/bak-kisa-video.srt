@@ -1,0 +1,17 @@
+1
+00:00:00,400 --> 00:00:06,040
+BAK: görme engelliler için sesli alışveriş ve yol
+tarifi asistanı.
+
+2
+00:00:06,339 --> 00:00:09,890
+Ürünü, tarihi ve parayı sesle okur.
+
+3
+00:00:10,189 --> 00:00:14,820
+Bina girişindeki QR'ı okutunca adım adım yol tarif
+eder.
+
+4
+00:00:15,119 --> 00:00:19,129
+BAK: görmeden de, sormadan da yolunu bul.

@@ -1,5 +1,8 @@
 # BAK iPhone sürümü – TestFlight ile paylaşma
 
+> **Durum (29 Ekim 2026): beklemede.** iPhone kodu ve Codemagic ayarı hazır; Apple Developer hesabı açılınca
+> aşağıdaki adımlarla sürdürülür. Son derleme imza adımında durmuştu (bkz. "İmza anahtarı").
+
 iPhone'a APK gibi doğrudan uygulama kurulamaz; Apple yalnızca App Store ve TestFlight'a izin verir. BAK, bir Apple
 Developer hesabından (yıllık 99 $) **TestFlight**'a yüklenir. iPhone kullanıcısı App Store'dan ücretsiz **TestFlight**
 uygulamasını kurar, paylaşılan **davet bağlantısına** dokunur ve BAK'ı yükler (en çok 10.000 kişi). Mac gerekmez:

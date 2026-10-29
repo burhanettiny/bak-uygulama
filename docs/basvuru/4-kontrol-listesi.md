@@ -6,6 +6,7 @@
 | `gerekce.txt` | "Aday gösterme gerekçesi" alanına yapıştırılacak metin (yaklaşık 2550 karakter; sınır 3000) |
 | `2-kisa-video.md`, `kisa-video.srt` | 20 saniyelik tören videosu: senaryo ve altyazı |
 | `3-uzun-video.md`, `uzun-video.srt` | ~6 dakikalık jüri videosu: sahne sahne senaryo, sesli betimleme ve altyazı |
+| `5-hazir-videolar.md` | Yapay zekâ araçlarıyla hazırlanan kısa ve uzun video, altyazıları ve eksik kalanlar (işaret dili tercümanı) |
 | Sunum | <https://claude.ai/artifact/P8wVR456sLwXguBpmpGgSL> – videodaki ekran görüntüleri ve jüri sunumu için |
 
 ## Gün gün
