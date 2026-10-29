@@ -9,10 +9,12 @@ workflows:
       # Codemagic'te (Team → Integrations → Developer Portal) eklenen App Store Connect API anahtarının adı
       app_store_connect: BAK App Store Connect
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: tr.bak
+      # Gizli değişken grubu (Codemagic → uygulama → Environment variables): CERTIFICATE_PRIVATE_KEY.
+      # İmza sertifikası ve App Store profili derlemede Apple'dan kendiliğinden oluşturulur/alınır (aşağıda).
+      groups:
+        - bak_imza
       vars:
+        BUNDLE_ID: tr.bak
         # App Store Connect → Uygulama → Uygulama Bilgileri → "Apple Kimliği" (yalnızca rakamlar)
         APP_STORE_APPLE_ID: 0000000000
       node: 22
@@ -23,8 +25,14 @@ workflows:
         script: npm ci
       - name: iOS bağımlılıkları (CocoaPods)
         script: cd ios && pod install --repo-update
-      - name: İmza profilleri
-        script: xcode-project use-profiles
+      - name: İmza (sertifika ve profil yoksa Apple'da oluşturulur)
+        script: |
+          keychain initialize
+          # Paket kimliği kayıtlı değilse kaydedilir (kayıtlıysa bu adım atlanır)
+          app-store-connect bundle-ids create "$BUNDLE_ID" --name "BAK" --platform IOS || true
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
+          keychain add-certificates
+          xcode-project use-profiles
       - name: Yapı numarası (her yüklemede bir artar)
         script: |
           SON=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" || echo 0)
