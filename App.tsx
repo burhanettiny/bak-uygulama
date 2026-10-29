@@ -12,7 +12,7 @@ import {
   ADIM_BOYLARI, EGITIM_ADIMLARI, EGITIM_TALKBACK, EgitimHareketi, KONUSMA_HIZLARI, TARAMA, TITRESIM, taramaModuMu,
 } from './src/sabitler';
 import {
-  TarifEt, aramaMetniTemizle, hedefBul, hedefEtiketi, hedefKonumu, listeRotasi, noktaAciklamasi, noktaAdi, qrCoz,
+  TarifEt, aramaMetniTemizle, hedefBul, hedefEtiketi, hedefKonumu, listeRotasi, noktaAciklamasi, noktaAdi, yakindakilerMetni, qrCoz,
   noktaTamAdi, rotaParcalari, rotaTarifi, turOzeti, varisIsle, yolUzunlugu,
 } from './src/mekan/yerlesim';
 import {
@@ -731,6 +731,8 @@ export default function App() {
         neleriVar(y, nokta, metin);
         return;
       }
+      // Bölge etiketi (neredeyim QR'ı): yakındaki yerler de söylenir
+      metin += yakindakilerMetni(y, nokta, adimCarpaniRef.current);
     }
     Vibration.vibrate(TITRESIM.urunBulundu);
     sesliSoyele(metin);
@@ -885,6 +887,7 @@ export default function App() {
     if (rehber) return `${metin} ${rehberDurumMetni(rehber)}`;
     metin += ` ${noktaAciklamasi(mekan, nokta)}`;
     if (hedef) metin += ` ${rotaTarifi(mekan, nokta, hedef, kacinilacak, kisaAnlatim, adimCarpaniRef.current)}`;
+    else metin += yakindakilerMetni(mekan, nokta, adimCarpaniRef.current);
     return metin;
   }
 

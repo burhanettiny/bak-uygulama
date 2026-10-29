@@ -374,6 +374,28 @@ export function noktaAciklamasi(y: Mekan, noktaId: string): string {
   return `${yer}${buradakiler.length ? ` Burada: ${buradakiler.join(', ')}.` : ''}`;
 }
 
+// Bölge etiketi ("neredeyim" QR'ı) okutulunca ya da "neredeyim" denince: en yakın yerler, gerçek yürüme mesafesiyle
+// ve kullanıcının adım uzunluğuna göre. "Yakınınızda: WC, yaklaşık 8 adım; Kardiyoloji, 14 adım."
+// Bulunulan noktadaki yerler ("Burada: …") ve çok uzaktakiler (60 standart adımdan fazla, ~40 m) sayılmaz.
+export function yakindakilerMetni(y: Mekan, noktaId: string, adimCarpani = 1, enFazla = 3): string {
+  const gorulen = new Set<string>();
+  const adaylar: {ad: string; adim: number}[] = [];
+  for (const h of y.hedefler) {
+    if (h.nokta === noktaId) continue;
+    const ad = h.kisaAd || h.ad;
+    const anahtar = harfSadelestir(ad);
+    if (gorulen.has(anahtar)) continue;
+    const adim = yolUzunlugu(y, noktaId, h.nokta);
+    if (!Number.isFinite(adim) || adim > 60) continue;
+    gorulen.add(anahtar);
+    adaylar.push({ad, adim});
+  }
+  const secilen = adaylar.sort((a, b) => a.adim - b.adim).slice(0, enFazla);
+  if (!secilen.length) return '';
+  return ` Yakınınızda: ${secilen.map((a, i) =>
+    `${a.ad}, ${i === 0 ? 'yaklaşık ' : ''}${Math.max(1, Math.round(a.adim * adimCarpani))} adım`).join('; ')}.`;
+}
+
 // ── Alışveriş listesine göre tur ─────────────────────────
 
 // Liste ürünleri hedeflere toplanır, duraklar her seferinde en yakın olana gidilerek sıralanır.
