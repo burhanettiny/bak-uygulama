@@ -27,9 +27,14 @@ uygulama Codemagic'in bulut Mac'inde derlenir.
    derlemesi vardır; bir derleme yaklaşık 20–25 dakika sürer.
 3. **Anahtarı bağlayın:** Codemagic → Team settings → Integrations → **Developer Portal** → Connect. Ad olarak tam
    `BAK App Store Connect` yazın; Issuer ID, Key ID ve `.p8` dosyasını girin.
-4. **Apple Kimliği:** `codemagic.yaml` içindeki `APP_STORE_APPLE_ID: 0000000000` satırına 2. adımdaki rakamları yazın
+4. **İmza anahtarı (bir kez):** Codemagic → uygulama → **Environment variables** → değişken adı
+   `CERTIFICATE_PRIVATE_KEY`, değer olarak `C:\Users\qurut\bak-ios-sertifika-anahtari.pem` dosyasının **tüm
+   içeriği** (`-----BEGIN RSA PRIVATE KEY-----` satırından sonuna kadar), grup adı `bak_imza`, **Secure** işaretli →
+   Add. Derleme bu anahtarla Apple'da dağıtım sertifikasını ve App Store profilini kendisi oluşturur (her derlemede
+   aynı sertifika kullanılır). Dosyayı bir yedeğe de koyun; depoya ya da sohbete koymayın.
+5. **Apple Kimliği:** `codemagic.yaml` içindeki `APP_STORE_APPLE_ID: 0000000000` satırına 2. adımdaki rakamları yazın
    ve GitHub'a gönderin.
-5. **Derleyin:** Codemagic → uygulama → **Start new build** → iş akışı `BAK iPhone → TestFlight`. Bitince derleme
+6. **Derleyin:** Codemagic → uygulama → **Start new build** → iş akışı `BAK iPhone → TestFlight`. Bitince derleme
    kendiliğinden TestFlight'a yüklenir (Apple'ın işlemesi 10–30 dakika sürer).
 
 ## Paylaşmak
