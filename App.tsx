@@ -1113,10 +1113,24 @@ export default function App() {
       : 'Kayıtlı alerjeniniz yok. Eklemek için uzun basıp örneğin fıstık alerjim var deyin.');
   }
 
-  function alerjenSil(silinecek?: KisiselAlerjen) {
-    alerjenleriKaydet(silinecek ? alerjenlerim.filter(k => k !== silinecek) : []);
+  // Ayarlar'dan tek alerjen ya da sesle söylenen ("fıstığı alerjenlerimden çıkar"); hiçbiri verilmezse hepsi
+  function alerjenSil(silinecek?: KisiselAlerjen | string) {
+    let cikan: KisiselAlerjen[] = alerjenlerim;
+    if (typeof silinecek === 'string') {
+      const istenen = kisiselAlerjenCoz(silinecek);
+      cikan = alerjenlerim.filter(k => istenen.some(i =>
+        harfSadelestir(i.ad) === harfSadelestir(k.ad) || (!!i.grup && i.grup === k.grup)));
+      if (!cikan.length) {
+        Vibration.vibrate(TITRESIM.hata);
+        sesliSoyele(`${silinecek} alerjenleriniz arasında yok. Listeyi duymak için alerjenlerim deyin.`);
+        return;
+      }
+    } else if (silinecek) {
+      cikan = [silinecek];
+    }
+    alerjenleriKaydet(alerjenlerim.filter(k => !cikan.includes(k)));
     Vibration.vibrate(TITRESIM.dokunusOnay);
-    sesliSoyele(silinecek ? `${silinecek.ad} alerjenlerden çıkarıldı.` : 'Alerjenleriniz silindi.');
+    sesliSoyele(silinecek ? `${cikan.map(k => k.ad).join(', ')} alerjenlerinizden çıkarıldı.` : 'Alerjenleriniz silindi.');
   }
 
   async function alerjenSesle() {
@@ -1488,7 +1502,7 @@ export default function App() {
       case 'adimOlc':      adimOlcumYuruyusu(); break;
       case 'alerjenEkle':  alerjenEkle(komut.metin); break;
       case 'alerjenler':   alerjenleriSoyle(); break;
-      case 'alerjenSil':   alerjenSil(); break;
+      case 'alerjenSil':   alerjenSil(komut.metin); break;
       case 'yonUyarisi':   yonUyarisiDegistir(komut.acik); break;
       case 'egitim':       egitimiBaslat(); break;
       case 'yardim':       sesliSoyele(KOMUT_YARDIMI); break;

@@ -42,6 +42,10 @@ test('sesli komutlar: alerjen, içindekiler, adım ölçümü', () => {
   expect(sesliKomutCoz('alerjenim süt ve gluten')).toEqual({tur: 'alerjenEkle', metin: 'süt ve gluten'});
   expect(sesliKomutCoz('alerjenlerim neler')).toEqual({tur: 'alerjenler'});
   expect(sesliKomutCoz('alerjenlerimi sil')).toEqual({tur: 'alerjenSil'});
+  // Tek alerjen silinirken diğerleri kalmalı
+  expect(sesliKomutCoz('alerjenimi sil fıstık')).toEqual({tur: 'alerjenSil', metin: 'fıstık'});
+  expect(sesliKomutCoz('fıstığı alerjenlerimden çıkar')).toEqual({tur: 'alerjenSil', metin: 'fıstığı'});
+  expect(kisiselAlerjenCoz('fıstığı')[0].grup).toBe(kisiselAlerjenCoz('fıstık')[0].grup);
   expect(sesliKomutCoz('içindekileri oku')).toEqual({tur: 'kamera', mod: 'icindekiler'});
   expect(sesliKomutCoz('barkod oku')).toEqual({tur: 'kamera', mod: 'barkod'});
   expect(sesliKomutCoz('adımımı ölç')).toEqual({tur: 'adimOlc'});

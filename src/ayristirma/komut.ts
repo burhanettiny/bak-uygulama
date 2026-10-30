@@ -37,7 +37,7 @@ export type SesliKomut =
   | {tur: 'adimOlc'}
   | {tur: 'alerjenEkle'; metin: string}
   | {tur: 'alerjenler'}
-  | {tur: 'alerjenSil'}
+  | {tur: 'alerjenSil'; metin?: string}
   | {tur: 'tekrarla'}
   | {tur: 'hiz'; yon: 'artir' | 'azalt'}
   | {tur: 'yardim'}
@@ -134,7 +134,13 @@ export function sesliKomutCoz(metin: string): SesliKomut {
     return {tur: 'adimOlc'};
   }
   // Kişisel alerjen: "fıstık alerjim var", "alerjenim süt ve gluten", "alerjenlerim neler", "alerjenlerimi sil"
-  if (/\balerjen\w* (sil|temizle|kaldir)\w*|\balerjenim yok\b|\balerjim yok\b/.test(s)) return {tur: 'alerjenSil'};
+  // "fıstığı alerjenlerimden çıkar", "alerjenimi sil süt": yalnızca söyleneni; "alerjenlerimi sil": hepsini
+  if (/\balerjen\w* (sil|temizle|kaldir|cikar)\w*|\b(sil|cikar)\w* alerjen|\balerjenim yok\b|\balerjim yok\b/.test(s)) {
+    const metin = ham.split(/\s+/)
+      .filter(k => !/^(alerj\S*|sil\S*|temizle\S*|kald[ıi]r\S*|[çc][ıi]kar\S*|yok|benim|listeden|listemden|lütfen)$/.test(k))
+      .join(' ').trim();
+    return metin ? {tur: 'alerjenSil', metin} : {tur: 'alerjenSil'};
+  }
   if (/^(alerjenlerim|alerjenlerim neler|alerjenlerim ne|alerjenlerimi (soyle|oku))$/.test(s)) return {tur: 'alerjenler'};
   if (/\balerj(im|enim|enlerim|im var)\b/.test(s)) {
     const metin = ham.replace(/\b(alerjim var|alerjim|alerjenim|alerjenlerim|var|benim)\b/g, ' ').replace(/\s+/g, ' ').trim();

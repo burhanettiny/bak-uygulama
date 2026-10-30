@@ -45,7 +45,10 @@ export function kisiselAlerjenCoz(soylenen: string): KisiselAlerjen[] {
   const sonuc: KisiselAlerjen[] = [];
   for (const ad of parcalar) {
     const sade = harfSadelestir(ad);
-    const grup = ALERJEN_SOZLUGU.find(([g, sozler]) => harfSadelestir(g) === sade || sozler.some(s => sade.startsWith(s)))?.[0];
+    // Ekli söyleyiş de tanınsın: "fıstığı" → fıstık, "sütü" → süt, "gluteni" → gluten
+    const adaylar = [sade, sade.replace(/g[iu]$/, 'k'), sade.replace(/y?[iu]$/, '')];
+    const grup = ALERJEN_SOZLUGU.find(([g, sozler]) =>
+      adaylar.some(a => harfSadelestir(g) === a || sozler.some(s => a.startsWith(s))))?.[0];
     if (!sonuc.some(k => harfSadelestir(k.ad) === sade)) sonuc.push({ad, grup: grup ?? null});
   }
   return sonuc;
