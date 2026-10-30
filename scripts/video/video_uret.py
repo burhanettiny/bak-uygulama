@@ -104,8 +104,11 @@ def uzun_sahneler():
             (A, "TalkBack ve iPhone'da VoiceOver ile uyumludur; ilk açılışta sesli bir eğitimle hareketleri öğretir.")]),
         ([kare_slayt("alisveris"), T("ana_butonlar.png", "Alışverişte", "Barkod, son kullanma tarihi, para, POS tutarı, alışveriş listesi")], [
             (A, "Ekranda alışveriş özellikleri ve uygulamanın tüm butonları görülüyor."),
-            (A, "Barkod okutulunca ürünün adı, markası ve alerjenleri söylenir. Barkod kameranın kenarında kalırsa uygulama telefonu hangi yöne çevireceğini söyler."),
-            (U, "Kod görünüyor. Telefonu biraz sola çevirin."),
+            (A, "Barkod okutulunca ürünün adı, markası ve alerjenleri söylenir. Kullanıcı kendi alerjenini bir kez söyler; o alerjen üründe varsa uygulama her şeyden önce uyarır ve telefon güçlü titrer."),
+            (U, "Dikkat! Bu üründe sizin alerjeniniz var: fıstık."),
+            (A, "Veritabanında olmayan ürünlerde ambalajın arkasındaki içindekiler yazısı okunur; eser miktarda içerebilir uyarısı ayrıca söylenir."),
+            (A, "Barkod kameranın kenarında kalırsa ya da henüz okunamıyorsa uygulama telefonu hangi yöne çevireceğini söyler."),
+            (U, "Barkod görünüyor. Telefonu biraz sola çevirin."),
             (A, "Son kullanma tarihini kendisi bulur ve tarih geçmişse uyarır. Banknotun değerini ve kasadaki POS cihazının ekranındaki tutarı da okur."),
             (A, "Alışveriş listesi sesle tutulur; mağazaya girince uygulama listedeki ürünleri en kısa sırayla gezdirir.")]),
         ([kare_slayt("bina")], [
@@ -116,7 +119,9 @@ def uzun_sahneler():
             (A, "Ardından adımları sayarak yol tarif eder. Her köşede, kullanıcının geldiği yöne göre sağa mı, sola mı, düz mü gideceğini söyler; merdiveni ve asansörü zamanında bildirir."),
             (A, "Yoldaki küçük etiketlerden biri okutulunca uygulama nerede olunduğunu ve yakındaki yerleri söyler."),
             (U, "Şu an 1. kat koridor başındasınız. Yakınınızda: WC, yaklaşık 8 adım; Kardiyoloji, 14 adım."),
-            (A, "Uygulama kullanıcının adım uzunluğunu da yürüdükçe kendisi öğrenir.")]),
+            (A, "Herkesin adımı farklıdır; kışın kalın giysiyle adımlar kısalabilir. Uygulama adım uzunluğunu her varışta kendisi düzeltir; kullanıcı isterse açık havada seksen adım yürüyerek GPS ile ölçtürür."),
+            (U, "Adımınız yaklaşık altmış iki santim ölçüldü."),
+            (A, "Kampüs gibi açık alanlarda neredeyim denince QR okutmadan, GPS ile en yakın bina söylenir.")]),
         ([kare_slayt("guvenlik")], [
             (A, "Ekranda güvenlik özellikleri yazıyor: kayboldum, yardım çağır ve konum gönderme."),
             (A, "Kaybolan kullanıcı kayboldum der; uygulama nerede olduğunu ve en yakın etiketi nasıl bulacağını anlatır."),
@@ -141,7 +146,7 @@ def uzun_sahneler():
             (A, "Uygulama hesap istemez, reklam ve takip içermez. Bilgiler telefonda kalır; okutulan binalar sonra internetsiz de çalışır.")]),
         ([kare_slayt("yolharitasi")], [
             (A, "Ekranda yol haritası görülüyor."),
-            (A, "BAK bugün çalışan bir Android uygulamasıdır; gerçek telefonda sahada denendi ve Google Play'e hazırlanıyor. iPhone sürümü de TestFlight ile paylaşılmaya hazırlanıyor."),
+            (A, "BAK bugün çalışan bir Android uygulamasıdır; gerçek telefonda sahada denendi ve Google Play'e hazırlanıyor. iPhone sürümünün altyapısı da hazırlandı."),
             (A, "Sıradaki adım, görme engelli kullanıcılar ve pilot kurumlarla sahada deneme.")]),
         ([kare_slayt("kapanis")], [
             (A, "Son ekranda BAK logosu, slogan ve web sitesinin adresi var: burhanettiny.github.io/bak-mekanlar."),
