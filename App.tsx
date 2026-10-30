@@ -12,7 +12,7 @@ import {
   ADIM_BOYLARI, EGITIM_ADIMLARI, EGITIM_TALKBACK, EgitimHareketi, KONUSMA_HIZLARI, TARAMA, TITRESIM, taramaModuMu,
 } from './src/sabitler';
 import {
-  TarifEt, aramaMetniTemizle, hedefBul, hedefEtiketi, hedefKonumu, listeRotasi, noktaAciklamasi, noktaAdi, yakindakilerMetni, qrCoz,
+  TarifEt, aramaMetniTemizle, hedefBul, hedefEtiketi, hedefKonumu, listeRotasi, noktaAciklamasi, noktaAdi, yakindakilerMetni, qrCoz, gpsIleEnYakinNokta, gpsliNoktaVar, GPS_YAKIN,
   noktaTamAdi, rotaParcalari, rotaTarifi, turOzeti, varisIsle, yolUzunlugu,
 } from './src/mekan/yerlesim';
 import {
@@ -940,14 +940,16 @@ export default function App() {
     sesliSoyele(`${hedefEtiketi(y, h, kisi)}. ${tarifEtici(y, await rehberHazirla())(baslangic, h)}${ek}`);
   }
 
-  function mekanDurumMetni(): string {
+  function mekanDurumMetni(gpsYakin?: {nokta: string; metre: number} | null): string {
     if (!mekan) return 'Etkin bina yok.';
-    const nokta = konumNoktasi || mekan.giris;
+    const nokta = gpsYakin?.nokta || konumNoktasi || mekan.giris;
     let metin = `${mekan.ad}.`;
     if (duraklar.length > 1) metin += ` Turda ${duraklar.length} durak kaldı.`;
     // Rehber sürüyorsa son QR noktası artık geride kalmıştır; o anki bölüm söylenir
     if (rehber) return `${metin} ${rehberDurumMetni(rehber)}`;
-    metin += ` ${noktaAciklamasi(mekan, nokta)}`;
+    metin += gpsYakin && gpsYakin.metre > GPS_YAKIN
+      ? ` GPS'e göre ${noktaAdi(mekan, nokta)} noktasına yaklaşık ${Math.round(gpsYakin.metre)} metre uzaklıktasınız.`
+      : ` ${gpsYakin ? "GPS'e göre: " : ''}${noktaAciklamasi(mekan, nokta)}`;
     if (hedef) metin += ` ${rotaTarifi(mekan, nokta, hedef, kacinilacak, kisaAnlatim, adimCarpaniRef.current)}`;
     else metin += yakindakilerMetni(mekan, nokta, adimCarpaniRef.current);
     return metin;
@@ -1152,10 +1154,27 @@ export default function App() {
 
   // ── Kayboldum ve acil yardım ──────────────────────────
 
-  function kayboldum() {
+  // Kampüs gibi açık alanda noktaların harita koordinatı varsa QR okutmadan GPS'ten en yakın nokta bulunur.
+  // Bina içinde ya da GPS zayıfken null döner; o zaman son okutulan QR noktası söylenir.
+  async function gpsYakinNokta(): Promise<{nokta: string; metre: number} | null> {
+    if (!mekan || rehber || !gpsliNoktaVar(mekan)) return null;
+    const gps = await beklerkenBildir('Konum alınıyor.', konumAl());
+    if (!gps || Date.now() - gps.zaman > 60000) return null;   // eski (son bilinen) konum yanıltır
+    const yakin = gpsIleEnYakinNokta(mekan, gps);
+    if (yakin && yakin.metre <= GPS_YAKIN) setKonumNoktasi(yakin.nokta);
+    return yakin;
+  }
+
+  async function neredeyim() {
+    const yakin = await gpsYakinNokta();
+    sesliSoyele(mekanDurumMetni(yakin));
+  }
+
+  async function kayboldum() {
     Vibration.vibrate(TITRESIM.dokunusOnay);
+    const yakin = await gpsYakinNokta();
     const metin = mekan
-      ? `Sakin olun, size yardım edeceğim. ${mekanDurumMetni()} ` +
+      ? `Sakin olun, size yardım edeceğim. ${mekanDurumMetni(yakin)} ` +
         'Konumunuzu kesinleştirmek için yakındaki bir QR etiketini okutun; bulmak için uzun basıp etiket ara deyin.'
       : 'Sakin olun. Etkin bir bina yok. Girişteki QR kodu okutun ya da yakınınızdaki birinden yardım isteyin.';
     sesliSoyele(metin + (yardimNumarasi || acilKisiler.length
@@ -1445,7 +1464,10 @@ export default function App() {
         if (duraklar.length) sonrakiDurak();
         else sesliSoyele('Devam eden bir tur yok. Listeyi gez diyerek başlatabilirsiniz.');
         break;
-      case 'neredeyim':    sesliSoyele(mekan ? mekanDurumMetni() : 'Etkin bina yok. Bina ya da mağaza girişindeki QR kodu okutun.'); break;
+      case 'neredeyim':
+        if (mekan) neredeyim();
+        else sesliSoyele('Etkin bina yok. Bina ya da mağaza girişindeki QR kodu okutun.');
+        break;
       case 'mekandanCik':  if (mekan) mekandanCik(); else sesliSoyele('Etkin bir bina yönlendirmesi yok.'); break;
       case 'tekrarla':     sonucuTekrarla(); break;
       case 'merdiven':     merdivenTercihiDegistir(komut.kacin); break;

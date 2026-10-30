@@ -57,6 +57,9 @@ export interface MekanNoktasi {
   ad: string;
   // 0 zemin kat; belirtilmezse 0
   kat?: number;
+  // Açık alandaki noktalar için harita koordinatı (QR oluşturucuda isteğe bağlı): "neredeyim"de GPS'ten en yakın nokta
+  enlem?: number;
+  boylam?: number;
 }
 
 export type BaglantiTuru = 'yuru' | 'rampa' | 'kapi' | 'merdiven' | 'yuruyen-merdiven' | 'asansor';

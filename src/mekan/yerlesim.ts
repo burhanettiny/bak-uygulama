@@ -1,6 +1,7 @@
 import {BaglantiTuru, Durak, KonumBilgisi, Mekan, MekanHedefi, MekanQr} from '../tipler';
 import {anahtarEslesir, eslesenAnahtarUzunlugu} from '../ayristirma/konum';
 import {harfSadelestir, kelimelereAyir, kucukHarf} from '../yazi';
+import {GpsNokta, gpsMesafesi} from './adimKalibrasyonu';
 
 // Eski sürümde basılmış tekil QR'lar örnek mağazanın noktalarına karşılık gelir
 const ESKI_QR_KODLARI: Record<string, string> = {
@@ -456,4 +457,27 @@ export function varisIsle(y: Mekan, nokta: string, duraklar: Durak[], kacinilaca
     metin += ` Listedeki tüm duraklar tamamlandı. ${tarifEt(nokta, kasa)}`;
   }
   return {metin, kalan};
+}
+
+// ── Açık alanda GPS ile konum ──
+// Kampüs gibi açık alanlarda noktaların harita koordinatı varsa, QR okutulmadan da "neredeyim" denince en yakın
+// nokta söylenebilir. Bina içinde GPS sapar; bu yüzden yalnızca konum hassasken (dogruluk küçük) ve bir noktaya
+// yeterince yakınken kullanılır. Döner: en yakın nokta ve mesafesi (metre) ya da null.
+export const GPS_EN_FAZLA_DOGRULUK = 20;   // metre: bundan kötü konum kullanılmaz
+export const GPS_EN_FAZLA_UZAKLIK = 40;    // metre: en yakın nokta bundan uzaksa "yakınında" denmez
+export const GPS_YAKIN = 15;               // metre: bu kadar yakınsa o noktada sayılır (QR okutulmuş gibi)
+
+export function gpsIleEnYakinNokta(y: Mekan, gps: GpsNokta | null): {nokta: string; metre: number} | null {
+  if (!gps || !(gps.dogruluk <= GPS_EN_FAZLA_DOGRULUK)) return null;
+  let enIyi: {nokta: string; metre: number} | null = null;
+  for (const n of y.noktalar) {
+    if (typeof n.enlem !== 'number' || typeof n.boylam !== 'number') continue;
+    const metre = gpsMesafesi(gps, {enlem: n.enlem, boylam: n.boylam, dogruluk: 0});
+    if (!enIyi || metre < enIyi.metre) enIyi = {nokta: n.id, metre};
+  }
+  return enIyi && enIyi.metre <= GPS_EN_FAZLA_UZAKLIK ? enIyi : null;
+}
+
+export function gpsliNoktaVar(y: Mekan): boolean {
+  return y.noktalar.some(n => typeof n.enlem === 'number' && typeof n.boylam === 'number');
 }

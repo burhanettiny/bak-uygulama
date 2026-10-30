@@ -332,7 +332,9 @@ for ad, (n, d, p) in sorted(bina_dugum.items(), key=lambda kv: uz.get(kv[1][0], 
 noktalar = list({i: {"id": i, "ad": nokta_ad[n]} for n, i in nokta_id.items()}.values())
 plan = {"konum": {nokta_id[n]: [round(konum[n][0] / 8, 1), round(konum[n][1] / 8, 1)] for n in nokta_id},
         # Çizim sayfası için modül türü: binalar "İçini aç" ile odalarıyla doldurulur
-        "tur": {i: ("bina" if n in hedef_dugumleri else "kavsak") for n, i in nokta_id.items()}}
+        "tur": {i: ("bina" if n in hedef_dugumleri else "kavsak") for n, i in nokta_id.items()},
+        # Gerçek harita koordinatı: telefondaki uygulama açık havada GPS'ten en yakın noktayı söyler
+        "gps": {i: [round(konum[n][1] / KY + LAT0, 6), round(konum[n][0] / KX + LON0, 6)] for n, i in nokta_id.items()}}
 mekan = {
     "sablonAdi": "Ardahan Üniversitesi Yenisey Kampüsü (OpenStreetMap yol ağından – sahada doğrulayın)",
     "id": "q-sablon", "ad": "Ardahan Üniversitesi Yenisey Kampüsü", "tur": "kurum", "surum": 1,
