@@ -249,6 +249,8 @@ export default function App() {
   // telefon ekranı kapatıp kilitlemesin. Rehber, vardıktan sonra yeni QR okutulana kadar açık kalabildiği
   // için yalnızca son adımdan sonraki birkaç dakika sayılır. Diğer zamanlarda telefonun ayarı geçerlidir (pil).
   const ekranAcikKalmali = mod === 'barkod' || taramaModuMu(mod) || mod === 'egitim' || rehberUyanik || dinleniyor;
+  const ekranAcikKalmaliRef = useRef(ekranAcikKalmali);
+  ekranAcikKalmaliRef.current = ekranAcikKalmali;
   useEffect(() => {
     ekranAcikTut(ekranAcikKalmali);
   }, [ekranAcikKalmali]);
@@ -1059,6 +1061,7 @@ export default function App() {
       return;
     }
     await konusVeBekle(`Şimdi normal adımlarınızla düz yürüyün. ${KALIBRASYON_ADIMI} adım sonra durun diyeceğim.`);
+    ekranAcikTut(true);   // yürürken telefon kilitlenip sayım kesilmesin
     const sayilan = await new Promise<number>(coz => {
       let n = 0;
       let bitti = false;
@@ -1077,6 +1080,7 @@ export default function App() {
         if (n >= KALIBRASYON_ADIMI) bitir();
       });
     });
+    ekranAcikTut(ekranAcikKalmaliRef.current);
     Vibration.vibrate(TITRESIM.urunBulundu);
     if (sayilan < KALIBRASYON_ADIMI) {
       sesliSoyele('Ölçüm tamamlanmadı. Yeniden denemek için uzun basıp adımımı ölç deyin.');
