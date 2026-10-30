@@ -130,6 +130,6 @@ describe('ürün bilgisi', () => {
       ad: 'Tam Yağlı Süt', marka: 'Pınar', alerjenler: ['süt'],
       konum: {bolum: 'Süt Ürünleri', koridor: '3', raf: '2', yonTarifi: '3. koridor.'},
     });
-    expect(metin).toBe('Pınar, Tam Yağlı Süt. Dikkat, alerjen içerir: süt. 3. koridor.');
+    expect(metin).toBe('Pınar, Tam Yağlı Süt. Alerjen içerir: süt. 3. koridor.');
   });
 });

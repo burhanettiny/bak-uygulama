@@ -21,6 +21,7 @@ const ERISIM_ETIKETLERI = {
   pos:    'POS tutarı otomatik aranıyor. Çıkmak için ekrana dokun. Fener için uzun bas.',
   para:   'Para tanınıyor. Çıkmak için ekrana dokun. Fener için uzun bas.',
   tarih:  'Son kullanma tarihi otomatik aranıyor. Çıkmak için ekrana dokun. Fener için uzun bas.',
+  icindekiler: 'İçindekiler yazısı aranıyor. Çıkmak için ekrana dokun. Fener için uzun bas.',
 };
 
 const UST_YAZILAR = {
@@ -28,6 +29,7 @@ const UST_YAZILAR = {
   pos:    '💳  POS ekranını yaklaştırın',
   para:   '💵  Banknotu düz tutun',
   tarih:  '📅  Ürünü yavaşça çevirin',
+  icindekiler: '🧾  Ambalajın arka yüzünü tutun',
 };
 
 const ARAMA_YAZILARI = {
@@ -35,6 +37,7 @@ const ARAMA_YAZILARI = {
   pos:    '💳 Tutar aranıyor...',
   para:   '💵 Para tanınıyor...',
   tarih:  '📅 Tarih aranıyor...',
+  icindekiler: '🧾 İçindekiler aranıyor...',
 };
 
 // Kamerayı açan çoklu dokunuşun artığı ya da ürünü tutarken avucun ekrana değmesi kamerayı hemen kapatmasın

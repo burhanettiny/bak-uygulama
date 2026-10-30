@@ -1,6 +1,7 @@
 import {UrunBilgisi} from '../tipler';
 import {kategorideKonum} from '../ayristirma/konum';
 import {alerjenleriCevir, kategoriEtiketiSec} from '../ayristirma/urun';
+import {icindekilerdenAlerjenler} from '../ayristirma/alerjen';
 import {kayitOku, kayitYaz} from './kayit';
 import {zamanAsimliFetch} from './ag';
 
@@ -14,9 +15,14 @@ export async function openFoodFactsGetir(barkod: string): Promise<UrunBilgisi | 
     const ad       = p.product_name_tr || p.product_name || '';
     if (!ad) return null;
     const kategori = kategoriEtiketiSec(p.categories_tags);
+    // Alerjen alanı Türk ürünlerinde çoğu zaman boştur: içindekiler metninde de aranır
+    const icindekiler: string = p.ingredients_text_tr || p.ingredients_text || '';
+    const alerjenler = Array.from(new Set([...alerjenleriCevir(p.allergens_tags), ...icindekilerdenAlerjenler(icindekiler)]));
+    const eserAlerjenler = alerjenleriCevir(p.traces_tags).filter(a => !alerjenler.includes(a));
     return {
       ad, marka: p.brands || '', kategori, konum: kategorideKonum(kategori, ad),
-      kaynak: 'Gıda Veritabanı', alerjenler: alerjenleriCevir(p.allergens_tags),
+      kaynak: 'Gıda Veritabanı', alerjenler, eserAlerjenler, icindekiler: icindekiler || undefined,
+      alerjenBilgisiVar: !!(p.allergens_tags?.length || p.traces_tags?.length || icindekiler),
     };
   } catch { return null; }
 }

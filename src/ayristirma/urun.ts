@@ -1,4 +1,5 @@
 import {GecmisKaydi, UrunBilgisi} from '../tipler';
+import {KisiselAlerjen, kisiselEslesmeler} from './alerjen';
 
 // OpenFoodFacts kategori etiketlerinin sonuncusu en belirgin olanıdır
 // ("en:plant-based-foods-and-beverages" → ... → "en:orange-juices")
@@ -22,11 +23,28 @@ export function alerjenleriCevir(etiketler?: string[]): string[] {
   return Array.from(new Set(sonuc));
 }
 
-export function urunSesliMetin(u: UrunBilgisi): string {
-  let metin = `${u.marka ? u.marka + ', ' : ''}${u.ad}.`;
-  if (u.alerjenler?.length) metin += ` Dikkat, alerjen içerir: ${u.alerjenler.join(', ')}.`;
+// Kullanıcının kendi alerjeni varsa uyarı EN BAŞTA söylenir (ürün adından önce): görme engelli kullanıcı
+// cümlenin sonunu dinlemeden ürünü sepete koyabilir. Alerjen bilgisi hiç yoksa bu da söylenir: "yok" ile
+// "bilinmiyor" aynı şey değildir.
+export function urunSesliMetin(u: UrunBilgisi, kisisel: KisiselAlerjen[] = []): string {
+  const {icerir, eser} = kisiselEslesmeler(u, kisisel);
+  let metin = '';
+  if (icerir.length) metin += `Dikkat! Bu üründe sizin alerjeniniz var: ${icerir.join(', ')}. `;
+  else if (eser.length) metin += `Dikkat! Bu ürün sizin alerjeninizi eser miktarda içerebilir: ${eser.join(', ')}. `;
+  metin += `${u.marka ? u.marka + ', ' : ''}${u.ad}.`;
+  if (u.alerjenler?.length) metin += ` Alerjen içerir: ${u.alerjenler.join(', ')}.`;
+  if (u.eserAlerjenler?.length) metin += ` Eser miktarda içerebilir: ${u.eserAlerjenler.join(', ')}.`;
+  if (!u.alerjenler?.length && !u.eserAlerjenler?.length && kisisel.length && !u.alerjenBilgisiVar) {
+    metin += ' Bu ürünün alerjen bilgisi bulunamadı. İçindekileri duymak için uzun basıp içindekileri oku deyin.';
+  }
   if (u.konum?.yonTarifi) metin += ` ${u.konum.yonTarifi}`;
   return metin;
+}
+
+// Kullanıcının alerjeni üründe var mı (titreşimi güçlü yapmak için)
+export function kisiselAlerjenVar(u: UrunBilgisi, kisisel: KisiselAlerjen[]): boolean {
+  const {icerir, eser} = kisiselEslesmeler(u, kisisel);
+  return icerir.length + eser.length > 0;
 }
 
 export function gecmisSesliMetin(g: GecmisKaydi): string {

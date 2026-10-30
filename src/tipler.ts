@@ -12,6 +12,9 @@ export interface UrunBilgisi {
   konum?: KonumBilgisi;
   kaynak?: string;
   alerjenler?: string[];
+  eserAlerjenler?: string[];       // "eser miktarda içerebilir"
+  icindekiler?: string;            // içindekiler metni (varsa): kişisel alerjen bu metinde de aranır
+  alerjenBilgisiVar?: boolean;     // veritabanında alerjen ya da içindekiler bilgisi vardı
 }
 
 export interface TarihSonuc {
@@ -22,7 +25,7 @@ export interface TarihSonuc {
   gunKaldi: number;
 }
 
-export type Mod = 'ana' | 'barkod' | 'pos' | 'tarih' | 'para' | 'gecmis' | 'liste' | 'hakkinda' | 'ayarlar' | 'egitim';
+export type Mod = 'ana' | 'barkod' | 'pos' | 'tarih' | 'para' | 'icindekiler' | 'gecmis' | 'liste' | 'hakkinda' | 'ayarlar' | 'egitim';
 
 export interface GecmisKaydi {
   barkod: string;
@@ -44,7 +47,7 @@ export type ListeKomutu =
   | {tur: 'sil'; oge: string}
   | {tur: 'temizle'};
 
-export type TaramaModu = 'pos' | 'tarih' | 'para';
+export type TaramaModu = 'pos' | 'tarih' | 'para' | 'icindekiler';
 
 // ── Mekân yerleşimi (mağaza, hastane, kamu binası…) ──────
 // Mekân; noktalar (giriş, koridor, oda kapısı, asansör önü) ve aralarındaki yollardan oluşan bir haritadır.

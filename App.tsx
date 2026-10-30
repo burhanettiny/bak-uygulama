@@ -20,16 +20,22 @@ import {
 } from './src/mekan/rehber';
 import {YonIzleyici, yonIzleyici} from './src/mekan/yonIzleyici';
 import {adresQrCoz, kurumMekaniMi, veriQrCoz} from './src/mekan/qrVeri';
-import {Kutu, kodYonu} from './src/ayristirma/kodKonumu';
+import {Kutu, gorselIpucu, kodYonu} from './src/ayristirma/kodKonumu';
 import {AcilKisi, kisiBul, konumMesaji} from './src/ayristirma/konumMesaji';
-import {adimOlcumu, adimUzunluguCm, boydanCarpan, carpaniGuncelle} from './src/mekan/adimKalibrasyonu';
+import {
+  HIZLI_AGIRLIK, KALIBRASYON_ADIMI, NORMAL_AGIRLIK, SAPMA_ESIGI, adimOlcumu, adimUzunluguCm, boydanCarpan, carpaniGuncelle,
+  gpsAdimOlcumu,
+} from './src/mekan/adimKalibrasyonu';
 import {adimSayarHazirla, adimlariDinle} from './src/servisler/adimSayar';
 import {
   canliKonumPaylas, ekranAcikTut, whatsappGonder, erisilebilirlikAyarlariniAc, kisiSec, konumAl, mesajAc, numarayiOkunurYap, paylas,
   telefonNumarasiCoz, whatsappYardimcisiAcikMi, yardimAra, yonSensoruVarMi, yonuDinle,
 } from './src/servisler/cihaz';
 import {adrestenMekanIndir, mekanBul} from './src/servisler/mekanKaynagi';
-import {urunSesliMetin} from './src/ayristirma/urun';
+import {kisiselAlerjenVar, urunSesliMetin} from './src/ayristirma/urun';
+import {
+  KisiselAlerjen, icindekilerBul, icindekilerdenAlerjenler, kisiselAlerjenAdi, kisiselAlerjenCoz, kisiselEslesmeler,
+} from './src/ayristirma/alerjen';
 import {tutarBul, tutarSesliMetin} from './src/ayristirma/tutar';
 import {sonKullanmaTarihiBul, tarihDurumHesapla} from './src/ayristirma/tarih';
 import {banknotBul} from './src/ayristirma/banknot';
@@ -91,6 +97,7 @@ export default function App() {
   const [tutar,      setTutar]      = useState<string | null>(null);
   const [tarihSonuc, setTarihSonuc] = useState<TarihSonuc | null>(null);
   const [banknot,    setBanknot]    = useState<number | null>(null);
+  const [okunanMetin, setOkunanMetin] = useState<string | null>(null);   // son okunan içindekiler (tekrar için)
   const [izinDurumu, setIzinDurumu] = useState<'granted' | 'denied' | 'not-determined'>('not-determined');
   const [fenerAcik,  setFenerAcik]  = useState(false);
   const [gecmis,     setGecmis]     = useState<GecmisKaydi[]>([]);
@@ -127,10 +134,13 @@ export default function App() {
   const adimCarpaniRef = useRef(1);
   // Son QR noktası ve o QR'dan bu yana yürüme bölümlerinde sayılan adım
   const adimOlcumRef = useRef<{nokta: string; adim: number} | null>(null);
-  const adimOlcumSayisiRef = useRef(0);   // kaç yolda adım ölçüldü (kullanıcıya ne kadar güvenilir olduğunu söylemek için)
+  const adimOlcumSayisiRef = useRef(0);
+  const hizliOlcumRef = useRef(0);    // kalan hızlı ölçüm sayısı ("adımlarım değişti" ya da art arda sapma)
+  const sapmaRef = useRef(0);         // art arda aynı yönde sapan ölçüm sayısı (+ uzun, - kısa)   // kaç yolda adım ölçüldü (kullanıcıya ne kadar güvenilir olduğunu söylemek için)
   const [yardimNumarasi, setYardimNumarasi] = useState<string | null>(null);
   // Rehberden seçilen acil kişiler: konum gönderme ve "annemi ara" için
   const [acilKisiler, setAcilKisiler] = useState<AcilKisi[]>([]);
+  const [alerjenlerim, setAlerjenlerim] = useState<KisiselAlerjen[]>([]);
   // İlk açılış eğitimi: hangi adımda olunduğu ve TalkBack sürümünün mü gösterildiği
   const [egitimAdim, setEgitimAdim] = useState(0);
   const [egitimTalkback, setEgitimTalkback] = useState(false);
@@ -148,7 +158,10 @@ export default function App() {
   const taramaIntervalRef  = useRef<ReturnType<typeof setInterval> | null>(null);
   const denemeSayisiRef    = useRef(0);
   const cameraRef          = useRef<Camera>(null);
-  const kameraAcilisRef    = useRef(0);   // kamerayı açan dokunuşların artığı kamerayı hemen kapatmasın
+  const kameraAcilisRef    = useRef(0);
+  const gorselMesgulRef    = useRef(false);
+  const gorselYardimRef    = useRef<() => Promise<void>>(async () => {});
+  const modRef             = useRef<Mod>('ana');   // kamerayı açan dokunuşların artığı kamerayı hemen kapatmasın
   const device             = useCameraDevice('back');
   const kameraHazir        = !!device;
   const cokluDokunus       = useCokluDokunus();
@@ -165,9 +178,11 @@ export default function App() {
       adimCarpaniAyarla(await kayitOku<number>('ayar:adimCarpani', ADIM_BOYLARI[index].carpan), false);
     });
     kayitOku<number>('ayar:adimOlcumSayisi', 0).then(n => { adimOlcumSayisiRef.current = n; });
+    kayitOku<number>('ayar:adimHizliOlcum', 0).then(n => { hizliOlcumRef.current = n; });
     kayitOku<boolean>('ayar:yonUyarisi', true).then(setYonUyarisi);
     kayitOku<string | null>('ayar:yardimNumarasi', null).then(setYardimNumarasi);
     kayitOku<AcilKisi[]>('acilKisiler', []).then(setAcilKisiler);
+    kayitOku<KisiselAlerjen[]>('ayar:alerjenler', []).then(setAlerjenlerim);
     kayitOku<number>('ayar:konusmaHizi', 1).then(i => {
       const index = KONUSMA_HIZLARI[i] ? i : 1;
       setHizIndex(index);
@@ -247,6 +262,8 @@ export default function App() {
     if (mod !== 'barkod') return;
     const etiket = etiketAraniyorRef.current;
     const nabiz = setInterval(() => Vibration.vibrate(30), 2000);
+    // Kod çözülemezken görüntüden yön ipucu (en güncel render'daki işlev çağrılır)
+    const gorsel = setInterval(() => gorselYardimRef.current(), 2500);
     const zamanlayicilar = (etiket ? ETIKET_IPUCLARI : BARKOD_IPUCLARI)
       .map(([sn, ipucu]) => setTimeout(() => sesliSoyele(ipucu), sn * 1000));
     zamanlayicilar.push(setTimeout(() => {
@@ -259,6 +276,7 @@ export default function App() {
     }, (etiket ? ETIKET_VAZGECME_SN : BARKOD_VAZGECME_SN) * 1000));
     return () => {
       clearInterval(nabiz);
+      clearInterval(gorsel);
       zamanlayicilar.forEach(clearTimeout);
       etiketAraniyorRef.current = false;
     };
@@ -398,6 +416,12 @@ export default function App() {
       sesliSoyele(`Tutar: ${tutarSesliMetin(bulunanTutar)}`);
       return true;
     }
+    if (taramaModu === 'icindekiler') {
+      const icindekiler = icindekilerBul(metin);
+      if (!icindekiler) return false;
+      icindekilerGoster(icindekiler);
+      return true;
+    }
     const deger = banknotBul(metin);
     if (!deger) return false;
     sonuclariTemizle();
@@ -433,13 +457,32 @@ export default function App() {
     sonuclariTemizle();
     setMod('ana');
     Vibration.vibrate(TITRESIM.urunBulunamadi);
-    if (taramaModu === 'pos') {
+    if (taramaModu === 'icindekiler') {
+      setDurum('İçindekiler bulunamadı');
+      sesliSoyele('İçindekiler okunamadı. Ambalajın arka yüzünde küçük yazıyla olabilir; tekrar denemek için uzun basıp ' +
+        'içindekileri oku deyin ya da bir görevliye sorun.');
+    } else if (taramaModu === 'pos') {
       setDurum('Tutar bulunamadı');
       sesliSoyele('Tutar okunamadı. Tekrar denemek için uzun basıp POS tutarı deyin.');
     } else {
       setDurum('Para tanınamadı');
       sesliSoyele('Para tanınamadı. Tekrar denemek için uzun basıp para tanı deyin.');
     }
+  }
+
+  // Ambalajdan okunan içindekiler: önce kullanıcının kendi alerjeni, sonra genel alerjenler, sonra metnin kendisi
+  function icindekilerGoster(icindekiler: string) {
+    sonuclariTemizle();
+    const gruplar = icindekilerdenAlerjenler(icindekiler);
+    const {icerir} = kisiselEslesmeler({ad: '', marka: '', alerjenler: gruplar, icindekiler}, alerjenlerim);
+    let metin = icerir.length ? `Dikkat! İçindekilerde sizin alerjeniniz var: ${icerir.join(', ')}. ` : '';
+    if (gruplar.length) metin += `Alerjen: ${gruplar.join(', ')}. `;
+    metin += `İçindekiler: ${icindekiler}.`;
+    setOkunanMetin(metin);
+    setMod('ana');
+    setDurum('İçindekiler okundu');
+    Vibration.vibrate(icerir.length ? TITRESIM.hata : TITRESIM.urunBulundu);
+    sesliSoyele(metin);
   }
 
   function tarihGoster(sonuc: TarihSonuc) {
@@ -456,7 +499,7 @@ export default function App() {
   }
 
   function sonuclariTemizle() {
-    setUrun(null); setTutar(null); setTarihSonuc(null); setBanknot(null);
+    setUrun(null); setTutar(null); setTarihSonuc(null); setBanknot(null); setOkunanMetin(null);
   }
 
   function gecmiseEkle(barkod: string, bilgi: UrunBilgisi) {
@@ -685,20 +728,7 @@ export default function App() {
     }
     // Rehberle yürürken okutulan QR adım uzunluğunu ölçmeye yarar: önceki QR'dan bu yana sayılan adım
     // haritadaki yolla karşılaştırılır (bkz. adimKalibrasyonu.ts)
-    let kalibrasyonNotu = '';
-    const olcum = adimOlcumRef.current;
-    if (!yeniMekan && olcum && rehberRef.current) {
-      const oran = adimOlcumu(y, olcum.nokta, nokta, olcum.adim);
-      if (oran !== null) {
-        const yeniCarpan = carpaniGuncelle(adimCarpaniRef.current, oran);
-        if (Math.abs(yeniCarpan - adimCarpaniRef.current) / adimCarpaniRef.current >= 0.08) {
-          kalibrasyonNotu = ' Adımlarınızı ölçtüm, adım sayılarını buna göre ayarladım.';
-        }
-        adimCarpaniAyarla(yeniCarpan);
-        adimOlcumSayisiRef.current += 1;
-        kayitYaz('ayar:adimOlcumSayisi', adimOlcumSayisiRef.current);
-      }
-    }
+    const kalibrasyonNotu = yeniMekan ? '' : adimiOlc(y, nokta);
     adimOlcumRef.current = {nokta, adim: 0};
     setKonumNoktasi(nokta);
     sonuclariTemizle();
@@ -766,12 +796,44 @@ export default function App() {
   function sonrakiDurak() {
     if (!mekan || !duraklar.length) return;
     const nokta = duraklar[0].hedef.nokta;
+    // Etiket yoksa da adım ölçülür: kullanıcı "vardım" dediği an sayılan adım, haritadaki yolla karşılaştırılır
+    const kalibrasyonNotu = adimiOlc(mekan, nokta);
+    adimOlcumRef.current = {nokta, adim: 0};
     const varis = varisIsle(mekan, nokta, duraklar, kacinilacak, tarifEtici(mekan))!;
     if (!varis.kalan.length) rehberAyarla(null);
     setKonumNoktasi(nokta);
     setDuraklar(varis.kalan);
     Vibration.vibrate(TITRESIM.dokunusOnay);
-    sesliSoyele(varis.metin);
+    sesliSoyele(varis.metin + kalibrasyonNotu);
+  }
+
+  // Rehberle yürürken bir noktaya varılınca (etiket okutuldu ya da "vardım" denildi): son noktadan bu yana sayılan
+  // adım, haritadaki yolla karşılaştırılır ve kullanıcının adım uzunluğu güncellenir. Kullanıcıya söylenecek not döner.
+  function adimiOlc(y: Mekan, bitis: string): string {
+    const olcum = adimOlcumRef.current;
+    if (!olcum || !rehberRef.current) return '';
+    const oran = adimOlcumu(y, olcum.nokta, bitis, olcum.adim);
+    if (oran === null) return '';
+    const eski = adimCarpaniRef.current;
+    let not = '';
+    // Art arda iki ölçüm aynı yönde belirgin saparsa adımlar değişmiştir (mevsim, ayakkabı): hızlı uyum
+    const yon = Math.abs(oran - eski) / eski > SAPMA_ESIGI ? Math.sign(oran - eski) : 0;
+    sapmaRef.current = yon !== 0 && Math.sign(sapmaRef.current) === yon ? sapmaRef.current + yon : yon;
+    if (Math.abs(sapmaRef.current) >= 2 && hizliOlcumRef.current === 0) {
+      hizliOlcumRef.current = 2;
+      not = ' Adımlarınız değişmiş görünüyor; hızla yeniden ayarlıyorum.';
+    }
+    const hizli = hizliOlcumRef.current > 0;
+    const yeni = carpaniGuncelle(eski, oran, hizli ? HIZLI_AGIRLIK : NORMAL_AGIRLIK);
+    if (hizli) hizliOlcumRef.current -= 1;
+    kayitYaz('ayar:adimHizliOlcum', hizliOlcumRef.current);
+    if (!not && Math.abs(yeni - eski) / eski >= 0.08) {
+      not = ` Adımlarınızı ölçtüm; adımınız şimdi yaklaşık ${adimUzunluguCm(yeni)} santim, adım sayılarını buna göre söyleyeceğim.`;
+    }
+    adimCarpaniAyarla(yeni);
+    adimOlcumSayisiRef.current += 1;
+    kayitYaz('ayar:adimOlcumSayisi', adimOlcumSayisiRef.current);
+    return not;
   }
 
   function mekanGerekli(): boolean {
@@ -958,6 +1020,106 @@ export default function App() {
     Vibration.vibrate(TITRESIM.dokunusOnay);
     sesliSoyele(`Boyunuz ${cm} santim; adımınız yaklaşık ${adimUzunluguCm(carpan)} santim. Adım sayılarını buna göre ` +
       'söyleyeceğim. Rehberle yürürken okuttuğunuz etiketlerle adımlarınızı ölçüp kendiliğinden düzelteceğim.');
+  }
+
+  // "Adımımı ölç": açık havada GPS ile 80 adımlık kalibrasyon yürüyüşü. GPS yeterince hassas değilse (bina içi,
+  // yüksek binalar arası) sonraki yürüyüşlerde etiketlerle ve "vardım" ile hızlı ölçüme geçilir.
+  async function adimOlcumYuruyusu() {
+    if (rehberRef.current) {
+      sesliSoyele('Yol tarifi sürerken adım ölçümü yapılamaz. Vardığınızda ya da yönlendirmeyi kapatınca yeniden deneyin.');
+      return;
+    }
+    if (!(await adimSayarHazirla())) {
+      sesliSoyele('Bu telefonda adım sensörü yok ya da izin verilmedi; adım ölçülemiyor.');
+      return;
+    }
+    const hizliyaGec = (neden: string) => {
+      hizliOlcumRef.current = 3;
+      kayitYaz('ayar:adimHizliOlcum', 3);
+      sesliSoyele(`${neden} Bunun yerine bina içinde ölçeceğim: rehberle bir yere gidin; vardığınızda oradaki etiketi ` +
+        'okutun ya da vardım deyin. Sonraki üç yürüyüşte adımlarınızı hızla yeniden ayarlayacağım.');
+    };
+    await konusVeBekle('Adım ölçümü. Açık havada, düz ve engelsiz bir yolun başında durun. Konumunuz alınıyor.');
+    const bas = await beklerkenBildir('Konum alınıyor.', konumAl(), 'Hâlâ konum alınıyor; açık havada olduğunuzdan emin olun.');
+    if (!bas || bas.dogruluk > 12) {
+      hizliyaGec('Burada GPS yeterince hassas değil.');
+      return;
+    }
+    await konusVeBekle(`Şimdi normal adımlarınızla düz yürüyün. ${KALIBRASYON_ADIMI} adım sonra durun diyeceğim.`);
+    const sayilan = await new Promise<number>(coz => {
+      let n = 0;
+      let bitti = false;
+      let birak: () => void = () => {};
+      const sure = setTimeout(() => bitir(), 180000);   // üç dakikada bitmezse vazgeçilir
+      function bitir() {
+        if (bitti) return;
+        bitti = true;
+        clearTimeout(sure);
+        birak();
+        coz(n);
+      }
+      birak = adimlariDinle(() => {
+        n += 1;
+        if (n === KALIBRASYON_ADIMI / 2) Vibration.vibrate(TITRESIM.dokunusOnay);
+        if (n >= KALIBRASYON_ADIMI) bitir();
+      });
+    });
+    Vibration.vibrate(TITRESIM.urunBulundu);
+    if (sayilan < KALIBRASYON_ADIMI) {
+      sesliSoyele('Ölçüm tamamlanmadı. Yeniden denemek için uzun basıp adımımı ölç deyin.');
+      return;
+    }
+    await konusVeBekle('Durun. Konumunuz alınıyor.');
+    const son = await beklerkenBildir('Konum alınıyor.', konumAl());
+    const sonuc = gpsAdimOlcumu(bas, son, sayilan);
+    if ('hata' in sonuc) {
+      hizliyaGec(sonuc.hata === 'gps' ? 'GPS konumu yeterince hassas alınamadı.'
+        : 'Ölçüm güvenilir çıkmadı; yol düz değildi ya da GPS kaydı.');
+      return;
+    }
+    // Bilerek yapılan ölçüm: ağırlığı yüksek, ama tek GPS ölçümü olduğu için eskisini tamamen silmez
+    adimCarpaniAyarla(carpaniGuncelle(adimCarpaniRef.current, sonuc.carpan, HIZLI_AGIRLIK));
+    adimOlcumSayisiRef.current += 1;
+    kayitYaz('ayar:adimOlcumSayisi', adimOlcumSayisiRef.current);
+    sesliSoyele(`Adımınız yaklaşık ${sonuc.adimCm} santim ölçüldü. Adım sayılarını buna göre söyleyeceğim; bina içinde ` +
+      'etiketlerle ölçmeye devam edeceğim.');
+  }
+
+  // ── Kişisel alerjenler ──
+  function alerjenleriKaydet(yeni: KisiselAlerjen[]) {
+    setAlerjenlerim(yeni);
+    kayitYaz('ayar:alerjenler', yeni);
+  }
+
+  function alerjenEkle(metin: string) {
+    const eklenecek = kisiselAlerjenCoz(metin);
+    if (!eklenecek.length) {
+      sesliSoyele('Hangi alerjen? Örneğin fıstık alerjim var ya da alerjenim süt ve gluten deyin.');
+      return;
+    }
+    const yeni = [...alerjenlerim];
+    for (const a of eklenecek) if (!yeni.some(k => k.ad === a.ad)) yeni.push(a);
+    alerjenleriKaydet(yeni);
+    Vibration.vibrate(TITRESIM.urunBulundu);
+    sesliSoyele(`Alerjenleriniz: ${yeni.map(kisiselAlerjenAdi).join(', ')}. Okuttuğunuz üründe bunlar varsa en başta ` +
+      'uyaracağım ve telefon güçlü titreyecek.');
+  }
+
+  function alerjenleriSoyle() {
+    sesliSoyele(alerjenlerim.length
+      ? `Alerjenleriniz: ${alerjenlerim.map(kisiselAlerjenAdi).join(', ')}.`
+      : 'Kayıtlı alerjeniniz yok. Eklemek için uzun basıp örneğin fıstık alerjim var deyin.');
+  }
+
+  function alerjenSil(silinecek?: KisiselAlerjen) {
+    alerjenleriKaydet(silinecek ? alerjenlerim.filter(k => k !== silinecek) : []);
+    Vibration.vibrate(TITRESIM.dokunusOnay);
+    sesliSoyele(silinecek ? `${silinecek.ad} alerjenlerden çıkarıldı.` : 'Alerjenleriniz silindi.');
+  }
+
+  async function alerjenSesle() {
+    const metin = await dinle('Alerjeninizi söyleyin, örneğin fıstık ve süt.', 'yeniden deneyin');
+    if (metin) alerjenEkle(metin);
   }
 
   function adimAyariniSoyle() {
@@ -1301,6 +1463,10 @@ export default function App() {
       case 'adimBoyu':     adimBoyuAyarla(ADIM_BOYLARI.findIndex(b => b.ad === komut.boy)); break;
       case 'boy':          boyAyarla(komut.cm); break;
       case 'adimAyari':    adimAyariniSoyle(); break;
+      case 'adimOlc':      adimOlcumYuruyusu(); break;
+      case 'alerjenEkle':  alerjenEkle(komut.metin); break;
+      case 'alerjenler':   alerjenleriSoyle(); break;
+      case 'alerjenSil':   alerjenSil(); break;
       case 'yonUyarisi':   yonUyarisiDegistir(komut.acik); break;
       case 'egitim':       egitimiBaslat(); break;
       case 'yardim':       sesliSoyele(KOMUT_YARDIMI); break;
@@ -1329,13 +1495,15 @@ export default function App() {
   function sonucuTekrarla() {
     Vibration.vibrate(TITRESIM.dokunusOnay);
     if (urun) {
-      sesliSoyele(urunSesliMetin(urun));
+      sesliSoyele(urunSesliMetin(urun, alerjenlerim));
     } else if (tutar) {
       sesliSoyele(`Tutar ${tutarSesliMetin(tutar)}`);
     } else if (tarihSonuc) {
       sesliSoyele(tarihSonuc.sesliMesaj);
     } else if (banknot) {
       sesliSoyele(`${banknot} Türk lirası.`);
+    } else if (okunanMetin) {
+      sesliSoyele(okunanMetin);
     } else if (mekan) {
       sesliSoyele(mekanDurumMetni());
     } else {
@@ -1348,7 +1516,10 @@ export default function App() {
   function kodYonuSoyle(kod: Kutu) {
     const onizleme = onizlemeRef.current;
     if (!onizleme.width || !onizleme.height) return;
-    const metin = kodYonu(kod, onizleme);
+    yonSoyle(kodYonu(kod, onizleme));
+  }
+
+  function yonSoyle(metin: string) {
     const simdi = Date.now();
     const son = sonYonRef.current;
     if (simdi - son.zaman < (metin === son.metin ? 4000 : 2000)) return;
@@ -1383,6 +1554,7 @@ export default function App() {
       pos:    'POS cihazının ekranını kameraya tutun. Tutar otomatik okunacak.',
       tarih:  'Ürünü kameraya yaklaştırın. Son kullanma tarihi otomatik okunacak.',
       para:   'Banknotu düz şekilde kameraya tutun. Değeri otomatik okunacak.',
+      icindekiler: 'Ambalajın arka yüzünü kameraya tutun, bir karış uzakta. İçindekiler yazısını bulunca okuyacağım.',
     };
     setDurum('Kamera açık');
     sesliSoyele(mesaj || mesajlar[hedefMod]);
@@ -1439,19 +1611,56 @@ export default function App() {
         if (gorulen?.frame) kodYonuSoyle(gorulen.frame);
         return;
       }
-      tarandiRef.current = true;
-      try {
-        await koduIsle(deger);
-      } catch {
-        // Beklenmedik bir hata tarayıcıyı kilitlemesin; kullanıcı ne olduğunu bilsin
-        Vibration.vibrate(TITRESIM.hata);
-        setDurum('Kod işlenemedi');
-        sesliSoyele('Kod okundu ama işlenemedi. Tekrar denemek için iki kez dokunun.');
-      } finally {
-        setTimeout(() => { tarandiRef.current = false; }, 2000);
-      }
+      await kodOkut(deger);
     },
   });
+
+  async function kodOkut(deger: string) {
+    if (tarandiRef.current) return;
+    tarandiRef.current = true;
+    try {
+      await koduIsle(deger);
+    } catch {
+      // Beklenmedik bir hata tarayıcıyı kilitlemesin; kullanıcı ne olduğunu bilsin
+      Vibration.vibrate(TITRESIM.hata);
+      setDurum('Kod işlenemedi');
+      sesliSoyele('Kod okundu ama işlenemedi. Tekrar denemek için iki kez dokunun.');
+    } finally {
+      setTimeout(() => { tarandiRef.current = false; }, 2000);
+    }
+  }
+
+  // Barkod kamerası açıkken kod henüz çözülemiyorsa (uzak, kenarda, bulanık) görüntü yazı tanımadan geçirilir:
+  // BAK etiketinin yazısına ya da barkodun altındaki rakamlara göre "sola çevirin / yaklaştırın" denir; rakamlar
+  // tam ve doğruysa barkod o numarayla aranır (bkz. kodKonumu.ts gorselIpucu). Fotoğraf sessiz çekilir ve silinir.
+  async function barkodGorselYardim() {
+    if (tarandiRef.current || gorselMesgulRef.current || !cameraRef.current) return;
+    gorselMesgulRef.current = true;
+    try {
+      const foto = await cameraRef.current.takePhoto({flash: 'off', enableShutterSound: false});
+      try {
+        const sonuc = await TextRecognition.recognize(`file://${foto.path}`);
+        // Yazı tanıma kutuları dik (ekrandaki gibi) görüntüye göredir; sensör boyutu yan yatıksa çevrilir
+        const dik = foto.orientation === 'portrait' || foto.orientation === 'portrait-upside-down';
+        const boyut = dik === (foto.height >= foto.width)
+          ? {width: foto.width, height: foto.height} : {width: foto.height, height: foto.width};
+        const kutular = sonuc.blocks.flatMap(b => (b.lines.length
+          ? b.lines.map(l => ({text: l.text, frame: l.frame})) : [{text: b.text, frame: b.frame}]));
+        const ipucu = gorselIpucu(kutular, boyut);
+        if (!ipucu || tarandiRef.current || modRef.current !== 'barkod') return;
+        if (ipucu.tur === 'barkod') await kodOkut(ipucu.deger);
+        else yonSoyle(ipucu.metin);
+      } finally {
+        unlink(foto.path).catch(() => {});
+      }
+    } catch {
+      // Tek karede hata olabilir; bir sonraki denemede sürer
+    } finally {
+      gorselMesgulRef.current = false;
+    }
+  }
+  gorselYardimRef.current = barkodGorselYardim;
+  modRef.current = mod;
 
   async function koduIsle(deger: string) {
     setMod('ana');
@@ -1495,8 +1704,10 @@ export default function App() {
       setUrun(bilgi);
       gecmiseEkle(deger, bilgi);
       setDurum(`Ürün bulundu — ${bilgi.kaynak}`);
-      Vibration.vibrate(bilgi.alerjenler?.length ? TITRESIM.posBulundu : TITRESIM.urunBulundu);
-      sesliSoyele(urunSesliMetin(bilgi) + listedeIsaretle(bilgi));
+      // Kullanıcının kendi alerjeni varsa güçlü (hata) titreşimi: sesi duymasa da elinde hisseder
+      Vibration.vibrate(kisiselAlerjenVar(bilgi, alerjenlerim) ? TITRESIM.hata
+        : bilgi.alerjenler?.length ? TITRESIM.posBulundu : TITRESIM.urunBulundu);
+      sesliSoyele(urunSesliMetin(bilgi, alerjenlerim) + listedeIsaretle(bilgi));
     } else {
       setDurum('Ürün bulunamadı');
       Vibration.vibrate(TITRESIM.urunBulunamadi);
@@ -1545,6 +1756,10 @@ export default function App() {
         acilKisiler={acilKisiler}
         onAcilKisiEkle={acilKisiEkle}
         onAcilKisiSil={acilKisiSil}
+        alerjenler={alerjenlerim}
+        onAlerjenSesle={alerjenSesle}
+        onAlerjenSil={alerjenSil}
+        onAdimOlc={adimOlcumYuruyusu}
         onGeri={geriDon}
       />
     );

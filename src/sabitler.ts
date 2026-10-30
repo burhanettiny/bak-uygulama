@@ -35,19 +35,20 @@ export const TARAMA: Record<TaramaModu, {aralik: number; limit: number; ipucu: s
   tarih: {aralik: 1500, limit: 12, ipucu: 'Tarih henüz bulunamadı. Ürünü yavaşça çevirin. Karanlıksa fener için uzun basın.'},
   pos:   {aralik: 2000, limit: 10, ipucu: 'Tutar henüz okunamadı. Telefonu POS ekranına biraz yaklaştırın veya uzaklaştırın.'},
   para:  {aralik: 1500, limit: 12, ipucu: 'Para henüz tanınamadı. Banknotu düz tutun ve telefonu biraz uzaklaştırın.'},
+  icindekiler: {aralik: 1800, limit: 14, ipucu: 'İçindekiler henüz bulunamadı. Ambalajı yavaşça çevirin; içindekiler genellikle arka yüzde, küçük yazıyla yazılır. Telefonu bir karış uzakta tutun.'},
 };
 
 export function taramaModuMu(m: Mod): m is TaramaModu {
-  return m === 'pos' || m === 'tarih' || m === 'para';
+  return m === 'pos' || m === 'tarih' || m === 'para' || m === 'icindekiler';
 }
 
 // Hakkında ekranında sesli okunan metinler. "tamami" parçalardan kurulur; tek yerden güncellensin.
 const OZELLIKLER = 'Özellikler: Barkod ve QR kod okuma. 4 farklı ürün veritabanı. İnternetsiz çalışan ürün kaydı. ' +
-  'Son taranan ürünler listesi. Sesli ürün ve alerjen bilgisi. POS ekran tutarı okuma. Otomatik son kullanma tarihi ' +
+  'Son taranan ürünler listesi. Sesli ürün ve alerjen bilgisi; kendi alerjeninizi kaydederseniz ürün adından önce uyarı; ambalajdan içindekileri okuma. POS ekran tutarı okuma. Otomatik son kullanma tarihi ' +
   'tespiti. Para tanıma. Sesli alışveriş listesi. Sesli komutla kullanım. Ayarlanabilir konuşma hızı. ' +
   'Girişteki QR ile mağaza, hastane, okul ve kurumlarda bina içi sesli yol tarifi; girişte oradaki yerlerin ' +
   'numaralı listesi; birden çok sonuçta seçenek sunma; kat, merdiven ve asansör yönlendirmesi; doktor ve oda arama; ' +
-  'adım sayarla adım adım rehber; adım uzunluğunu kendiliğinden öğrenme; yön sapması uyarısı; kısa anlatım modu; ' +
+  'adım sayarla adım adım rehber; adım uzunluğunu etiketlerle, vardım deyince ve açık havada GPS ile ölçme; yön sapması uyarısı; kısa anlatım modu; ' +
   'duvardaki etiketi bulmak için etiket arama. Kayboldum komutu; rehberden seçilen acil kişilere konum gönderme ve tek komutla arama. ' +
   'İlk açılışta sesli eğitim. Kamerada fener. Dinlerken bip, sesiniz duyulunca titreşim, arama sürerken tık sesi. ' +
   `${EKRAN_OKUYUCU} uyumlu.`;

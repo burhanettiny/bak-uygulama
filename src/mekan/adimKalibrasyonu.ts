@@ -22,9 +22,14 @@ export function adimOlcumu(y: Mekan, baslangic: string, bitis: string, sayilan: 
   return oran >= OLCUM_ARALIGI[0] && oran <= OLCUM_ARALIGI[1] ? oran : null;
 }
 
-// Tek ölçüm yanıltabilir: yeni değer eskisiyle harmanlanır
-export function carpaniGuncelle(eski: number, olcum: number): number {
-  const yeni = eski * 0.6 + olcum * 0.4;
+// Tek ölçüm yanıltabilir: yeni değer eskisiyle harmanlanır. agirlik: yeni ölçümün payı. Kullanıcı "adımlarım
+// değişti" dediğinde (mevsim, ayakkabı, yorgunluk) ya da ölçümler art arda aynı yönde saptığında yeni adıma hızlı
+// uyulsun diye büyütülür (HIZLI_AGIRLIK).
+export const NORMAL_AGIRLIK = 0.4;
+export const HIZLI_AGIRLIK = 0.75;
+export const SAPMA_ESIGI = 0.15;   // ölçüm mevcut ayardan bu oranda farklıysa "sapma" sayılır
+export function carpaniGuncelle(eski: number, olcum: number, agirlik = NORMAL_AGIRLIK): number {
+  const yeni = eski * (1 - agirlik) + olcum * agirlik;
   return Math.round(Math.min(CARPAN_ARALIGI[1], Math.max(CARPAN_ARALIGI[0], yeni)) * 100) / 100;
 }
 
@@ -59,4 +64,37 @@ export function boyCoz(metin: string): number | null {
     else if (w in BIRLER) toplam += !yuzluk && toplam === 0 && w === 'bir' ? (yuzluk = true, 100) : BIRLER[w];
   }
   return toplam >= 100 ? toplam : null;
+}
+
+
+// ── GPS ile kalibrasyon yürüyüşü (açık havada) ──
+// Kullanıcı düz bir yolda KALIBRASYON_ADIMI adım yürür; başlangıç ve bitişteki GPS konumları arasındaki mesafe
+// adım sayısına bölünür. GPS birkaç metre sapabildiği için yalnızca iki ölçüm de yeterince hassassa kabul edilir;
+// bina içinde GPS çalışmaz, orada etiketler ve "vardım" ile ölçülür.
+export const KALIBRASYON_ADIMI = 80;
+const GPS_EN_KOTU_DOGRULUK = 12;   // metre
+
+export interface GpsNokta {
+  enlem: number;
+  boylam: number;
+  dogruluk: number;
+}
+
+export function gpsMesafesi(a: GpsNokta, b: GpsNokta): number {
+  const R = 6371000;
+  const r = (d: number) => (d * Math.PI) / 180;
+  const dEnlem = r(b.enlem - a.enlem);
+  const dBoylam = r(b.boylam - a.boylam);
+  const h = Math.sin(dEnlem / 2) ** 2 + Math.cos(r(a.enlem)) * Math.cos(r(b.enlem)) * Math.sin(dBoylam / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+export function gpsAdimOlcumu(bas: GpsNokta | null, son: GpsNokta | null, adim: number):
+  {carpan: number; adimCm: number} | {hata: 'gps' | 'mesafe'} {
+  if (!bas || !son || bas.dogruluk > GPS_EN_KOTU_DOGRULUK || son.dogruluk > GPS_EN_KOTU_DOGRULUK) return {hata: 'gps'};
+  const adimUzunlugu = gpsMesafesi(bas, son) / adim;   // metre
+  // Yol düz değildiyse (dönüldüyse) ya da GPS sıçradıysa adım uzunluğu insanca olmayan bir değer çıkar
+  if (adimUzunlugu < 0.35 || adimUzunlugu > 1.1) return {hata: 'mesafe'};
+  const carpan = Math.min(CARPAN_ARALIGI[1], Math.max(CARPAN_ARALIGI[0], STANDART_ADIM_CM / 100 / adimUzunlugu));
+  return {carpan: Math.round(carpan * 100) / 100, adimCm: Math.round(adimUzunlugu * 100)};
 }

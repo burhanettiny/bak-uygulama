@@ -34,6 +34,10 @@ export type SesliKomut =
   | {tur: 'adimBoyu'; boy: 'kısa' | 'normal' | 'uzun'}
   | {tur: 'boy'; cm: number | null}
   | {tur: 'adimAyari'}
+  | {tur: 'adimOlc'}
+  | {tur: 'alerjenEkle'; metin: string}
+  | {tur: 'alerjenler'}
+  | {tur: 'alerjenSil'}
   | {tur: 'tekrarla'}
   | {tur: 'hiz'; yon: 'artir' | 'azalt'}
   | {tur: 'yardim'}
@@ -45,7 +49,8 @@ export const KOMUT_YARDIMI =
   'listeye süt ekle, listeden süt sil, listemi oku, listeyi gez, vardım, neredeyim, etiket ara, devam, kayboldum, ' +
   'yardım çağır, yardım numaram ve ardından numara, konumumu gönder ya da yerimi gönder, konumumu Ayşe’ye gönder, canlı konumumu paylaş, acil kişi ekle, annemi ara, ' +
   'sus, tekrarla, kısa anlat, uzun anlat, daha hızlı konuş, yavaş konuş, ' +
-  'merdiven kullanma, merdiven kullan, adımlarım kısa, boyum 170, adım ayarım ne, adım sayarı kapat, yön uyarısını kapat, ' +
+  'merdiven kullanma, merdiven kullan, adımlarım kısa, boyum 170, adım ayarım ne, adımımı ölç, adım sayarı kapat, yön uyarısını kapat, ' +
+  'fıstık alerjim var, alerjenlerim neler, içindekileri oku, ' +
   'son taranan ürünler, ayarlar, eğitim, yönlendirmeyi kapat.';
 
 // Baştan sona eşleşir: "listede ne var" alışveriş listesi komutudur, bu değil
@@ -124,6 +129,17 @@ export function sesliKomutCoz(metin: string): SesliKomut {
   }
   // "boyum 170", "boyum bir yetmiş": adım uzunluğu boydan tahmin edilir
   if (/\bboy(um|umu| uzunlugum)\b/.test(s) && !/\badim/.test(s)) return {tur: 'boy', cm: boyCoz(s)};
+  // "adımımı ölç", "adımlarımı yeniden ölç", "adımlarım değişti": kalibrasyon yürüyüşü / hızlı yeniden ölçüm
+  if (/\badim(imi|larimi|lari)? (yeniden )?(olc|olcer|olcumunu yenile)\w*|\badimlarim degisti\b|\badim kalibr/.test(s)) {
+    return {tur: 'adimOlc'};
+  }
+  // Kişisel alerjen: "fıstık alerjim var", "alerjenim süt ve gluten", "alerjenlerim neler", "alerjenlerimi sil"
+  if (/\balerjen\w* (sil|temizle|kaldir)\w*|\balerjenim yok\b|\balerjim yok\b/.test(s)) return {tur: 'alerjenSil'};
+  if (/^(alerjenlerim|alerjenlerim neler|alerjenlerim ne|alerjenlerimi (soyle|oku))$/.test(s)) return {tur: 'alerjenler'};
+  if (/\balerj(im|enim|enlerim|im var)\b/.test(s)) {
+    const metin = ham.replace(/\b(alerjim var|alerjim|alerjenim|alerjenlerim|var|benim)\b/g, ' ').replace(/\s+/g, ' ').trim();
+    return metin ? {tur: 'alerjenEkle', metin} : {tur: 'alerjenler'};
+  }
   // "adım ayarım ne", "adımlarım ne kadar", "adım boyum ne"
   if (/\badim (ayarim|ayari|olcumum|uzunlugum)\b|\badimlarim ne\b|\badim boyum ne\b/.test(s)) return {tur: 'adimAyari'};
   // "adımlarım kısa", "adım boyum uzun", "adım boyunu normal yap"
@@ -157,6 +173,8 @@ export function sesliKomutCoz(metin: string): SesliKomut {
     return {tur: 'nerede', aranan: aramaMetniTemizle(ham)};
   }
 
+  // "İçindekileri oku" barkoddan ("oku") önce
+  if (/\b(icindekiler|icerik oku|icerigi oku|malzemeler\w* oku|bilesenler)/.test(s)) return {tur: 'kamera', mod: 'icindekiler'};
   // Kamera modları: "son kullanma tarihi" "oku" içerdiği için barkoddan önce bakılır
   if (/\b(son kullanma|skt|tarih)/.test(s)) return {tur: 'kamera', mod: 'tarih'};
   if (/\b(para|banknot|kac lira)\b/.test(s)) return {tur: 'kamera', mod: 'para'};

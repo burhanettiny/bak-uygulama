@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {AppState, Platform, View, Text, TouchableOpacity, ScrollView, TextInput} from 'react-native';
 import {numarayiOkunurYap} from '../ayristirma/telefon';
 import {AcilKisi} from '../ayristirma/konumMesaji';
+import {KisiselAlerjen, kisiselAlerjenAdi} from '../ayristirma/alerjen';
 import {erisilebilirlikAyarlariniAc, whatsappYardimcisiAcikMi} from '../servisler/cihaz';
 import {stil} from '../stil';
 
@@ -9,6 +10,7 @@ interface Props {
   hizAdi: string;
   adimBoyu: string;
   onAdimBoyu: () => void;
+  onAdimOlc: () => void;
   kisaAnlatim: boolean;
   merdivendenKacin: boolean;
   adimRehberi: boolean;
@@ -25,6 +27,9 @@ interface Props {
   acilKisiler: AcilKisi[];
   onAcilKisiEkle: () => void;
   onAcilKisiSil: (k: AcilKisi) => void;
+  alerjenler: KisiselAlerjen[];
+  onAlerjenSesle: () => void;
+  onAlerjenSil: (a: KisiselAlerjen) => void;
   onGeri: () => void;
 }
 
@@ -71,6 +76,11 @@ export function AyarlarEkrani(p: Props) {
           <Text style={stil.ayarEtiket}>Adım boyu</Text>
           <Text style={stil.ayarDeger}>{p.adimBoyu.toLocaleUpperCase('tr-TR')}</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={stil.ayarSatiri} onPress={p.onAdimOlc}
+          accessible={true} accessibilityRole="button"
+          accessibilityLabel="Adımlarımı ölç. Açık havada 80 adım yürüyerek adım uzunluğunuz ölçülür. Kışın ya da ayakkabı değişince yeniden ölçün.">
+          <Text style={stil.ayarEtiket}>📏 Adımlarımı ölç</Text>
+        </TouchableOpacity>
 
         <Anahtar etiket="Kısa anlatım" acik={p.kisaAnlatim} onPress={p.onKisaAnlatim}
           aciklama="Açıkken yol tarifleri daha kısa söylenir."/>
@@ -105,6 +115,29 @@ export function AyarlarEkrani(p: Props) {
             <TouchableOpacity style={stil.ayarButon} onPress={p.onYardimNumarasiSesle}
               accessible={true} accessibilityRole="button" accessibilityLabel="Numarayı sesle söyleyerek kaydet">
               <Text style={stil.ayarButonYazi}>🎙️ Sesle söyle</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={stil.ayarBolum}>
+          <Text style={stil.ayarEtiket} accessibilityRole="header">Alerjenlerim</Text>
+          <Text style={stil.ayarAciklama}>
+            Okuttuğunuz üründe bunlardan biri varsa uygulama ürün adından önce uyarır ve telefon güçlü titrer.
+            {p.alerjenler.length ? '' : ' Henüz alerjen yok.'}
+          </Text>
+          {p.alerjenler.map(a => (
+            <View key={a.ad} style={stil.ayarKisi}>
+              <Text style={stil.ayarKisiAd}>{kisiselAlerjenAdi(a)}</Text>
+              <TouchableOpacity style={stil.ayarKisiSil} onPress={() => p.onAlerjenSil(a)}
+                accessible={true} accessibilityRole="button" accessibilityLabel={`${a.ad} alerjenini sil`}>
+                <Text style={stil.ayarButonYazi}>Sil</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+          <View style={stil.ayarButonlar}>
+            <TouchableOpacity style={stil.ayarButon} onPress={p.onAlerjenSesle}
+              accessible={true} accessibilityRole="button" accessibilityLabel="Alerjen ekle: söyleyerek, örneğin fıstık ve süt">
+              <Text style={stil.ayarButonYazi}>🎙️ Sesle ekle</Text>
             </TouchableOpacity>
           </View>
         </View>
