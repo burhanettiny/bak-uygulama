@@ -60,15 +60,28 @@ export function kisiselAlerjenAdi(k: KisiselAlerjen): string {
 
 // Üründe kullanıcının alerjenlerinden hangileri var: kesin içerenler ve "eser miktarda içerebilir" olanlar
 export function kisiselEslesmeler(u: UrunBilgisi, kisisel: KisiselAlerjen[]): {icerir: string[]; eser: string[]} {
-  const sade = harfSadelestir((u.icindekiler || '').toLocaleLowerCase('tr-TR'));
+  const bolum = eserBolumunuAyir(u.icindekiler || '');
+  const sade = harfSadelestir(bolum.ana.toLocaleLowerCase('tr-TR'));
+  const eserSade = harfSadelestir(bolum.eser.toLocaleLowerCase('tr-TR'));
   const icerir: string[] = [];
   const eser: string[] = [];
   for (const k of kisisel) {
     const sozcuk = harfSadelestir(k.ad);
     if ((k.grup && u.alerjenler?.includes(k.grup)) || (sade && kelimeSinirli(sade, sozcuk))) icerir.push(k.ad);
-    else if (k.grup && u.eserAlerjenler?.includes(k.grup)) eser.push(k.ad);
+    else if ((k.grup && u.eserAlerjenler?.includes(k.grup)) || (eserSade && kelimeSinirli(eserSade, sozcuk))) eser.push(k.ad);
   }
   return {icerir, eser};
+}
+
+// Ambalajda içindekilerin ardından çoğu zaman "Eser miktarda fındık ve süt içerebilir." gelir: bu cümleler kesin
+// içerik değildir, ayrı söylenir. Döner: kesin içindekiler ve "içerebilir" cümleleri.
+const ESER = /eser miktar|icerebilir|bulunabilir|ayni tesis|ayni hat|capraz bulas/;
+export function eserBolumunuAyir(metin: string): {ana: string; eser: string} {
+  // "%2.5" bölünmesin: yalnızca ardından boşluk ya da metin sonu gelen nokta cümle sonudur
+  const cumleler = metin.split(/\.(?:\s+|$)/).map(c => c.trim()).filter(Boolean);
+  const eser = cumleler.filter(c => ESER.test(harfSadelestir(c.toLocaleLowerCase('tr-TR'))));
+  const ana = cumleler.filter(c => !eser.includes(c));
+  return {ana: ana.join('. ').replace(/[,;.]+$/, ''), eser: eser.join(' ')};
 }
 
 // Ambalajdan okunan yazıda "İçindekiler:" bölümü; bulunamazsa null. Sadeleştirme harf sayısını korur: arama

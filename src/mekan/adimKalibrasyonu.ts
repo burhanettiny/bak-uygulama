@@ -92,7 +92,11 @@ export function gpsMesafesi(a: GpsNokta, b: GpsNokta): number {
 export function gpsAdimOlcumu(bas: GpsNokta | null, son: GpsNokta | null, adim: number):
   {carpan: number; adimCm: number} | {hata: 'gps' | 'mesafe'} {
   if (!bas || !son || bas.dogruluk > GPS_EN_KOTU_DOGRULUK || son.dogruluk > GPS_EN_KOTU_DOGRULUK) return {hata: 'gps'};
-  const adimUzunlugu = gpsMesafesi(bas, son) / adim;   // metre
+  const mesafe = gpsMesafesi(bas, son);
+  // İki konumun belirsizliği toplamı yürünen yolun %30'unu aşarsa sonuç ±%30'dan kötü olabilir: ölçülmez
+  // (56 m'lik yürüyüşte iki ölçüm birlikte ~17 m'den hassas olmalı; açık havada telefonlar genelde 3–8 m verir)
+  if (mesafe >= 0.35 * adim && bas.dogruluk + son.dogruluk > 0.3 * mesafe) return {hata: 'gps'};
+  const adimUzunlugu = mesafe / adim;   // metre
   // Yol düz değildiyse (dönüldüyse) ya da GPS sıçradıysa adım uzunluğu insanca olmayan bir değer çıkar
   if (adimUzunlugu < 0.35 || adimUzunlugu > 1.1) return {hata: 'mesafe'};
   const carpan = Math.min(CARPAN_ARALIGI[1], Math.max(CARPAN_ARALIGI[0], STANDART_ADIM_CM / 100 / adimUzunlugu));

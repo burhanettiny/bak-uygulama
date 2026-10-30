@@ -28,13 +28,13 @@ import {
 } from './src/mekan/adimKalibrasyonu';
 import {adimSayarHazirla, adimlariDinle} from './src/servisler/adimSayar';
 import {
-  canliKonumPaylas, ekranAcikTut, whatsappGonder, erisilebilirlikAyarlariniAc, kisiSec, konumAl, mesajAc, numarayiOkunurYap, paylas,
+  GpsKonumu, canliKonumPaylas, ekranAcikTut, whatsappGonder, erisilebilirlikAyarlariniAc, kisiSec, konumAl, mesajAc, numarayiOkunurYap, paylas,
   telefonNumarasiCoz, whatsappYardimcisiAcikMi, yardimAra, yonSensoruVarMi, yonuDinle,
 } from './src/servisler/cihaz';
 import {adrestenMekanIndir, mekanBul} from './src/servisler/mekanKaynagi';
 import {kisiselAlerjenVar, urunSesliMetin} from './src/ayristirma/urun';
 import {
-  KisiselAlerjen, icindekilerBul, icindekilerdenAlerjenler, kisiselAlerjenAdi, kisiselAlerjenCoz, kisiselEslesmeler,
+  KisiselAlerjen, eserBolumunuAyir, icindekilerBul, icindekilerdenAlerjenler, kisiselAlerjenAdi, kisiselAlerjenCoz, kisiselEslesmeler,
 } from './src/ayristirma/alerjen';
 import {tutarBul, tutarSesliMetin} from './src/ayristirma/tutar';
 import {sonKullanmaTarihiBul, tarihDurumHesapla} from './src/ayristirma/tarih';
@@ -473,15 +473,21 @@ export default function App() {
   // Ambalajdan okunan içindekiler: önce kullanıcının kendi alerjeni, sonra genel alerjenler, sonra metnin kendisi
   function icindekilerGoster(icindekiler: string) {
     sonuclariTemizle();
-    const gruplar = icindekilerdenAlerjenler(icindekiler);
-    const {icerir} = kisiselEslesmeler({ad: '', marka: '', alerjenler: gruplar, icindekiler}, alerjenlerim);
+    // "Eser miktarda … içerebilir" cümlesi kesin içerik sayılmaz, ayrıca söylenir
+    const {ana, eser} = eserBolumunuAyir(icindekiler);
+    const gruplar = icindekilerdenAlerjenler(ana);
+    const eserGruplar = icindekilerdenAlerjenler(eser).filter(g => !gruplar.includes(g));
+    const {icerir, eser: kisiselEser} = kisiselEslesmeler(
+      {ad: '', marka: '', alerjenler: gruplar, eserAlerjenler: eserGruplar, icindekiler: ana}, alerjenlerim);
     let metin = icerir.length ? `Dikkat! İçindekilerde sizin alerjeniniz var: ${icerir.join(', ')}. ` : '';
+    if (kisiselEser.length) metin += `Dikkat! Sizin alerjeniniz eser miktarda bulunabilir: ${kisiselEser.join(', ')}. `;
     if (gruplar.length) metin += `Alerjen: ${gruplar.join(', ')}. `;
-    metin += `İçindekiler: ${icindekiler}.`;
+    if (eserGruplar.length) metin += `Eser miktarda içerebilir: ${eserGruplar.join(', ')}. `;
+    metin += `İçindekiler: ${ana || icindekiler}.`;
     setOkunanMetin(metin);
     setMod('ana');
     setDurum('İçindekiler okundu');
-    Vibration.vibrate(icerir.length ? TITRESIM.hata : TITRESIM.urunBulundu);
+    Vibration.vibrate(icerir.length || kisiselEser.length ? TITRESIM.hata : TITRESIM.urunBulundu);
     sesliSoyele(metin);
   }
 
@@ -1026,6 +1032,11 @@ export default function App() {
 
   // "Adımımı ölç": açık havada GPS ile 80 adımlık kalibrasyon yürüyüşü. GPS yeterince hassas değilse (bina içi,
   // yüksek binalar arası) sonraki yürüyüşlerde etiketlerle ve "vardım" ile hızlı ölçüme geçilir.
+  // GPS yeni konum bulamazsa telefonun son bilinen (eski olabilen) konumu gelir; ölçümde ve "neredeyim"de yanıltır
+  function taze(gps: GpsKonumu | null): GpsKonumu | null {
+    return gps && Math.abs(Date.now() - gps.zaman) <= 30000 ? gps : null;
+  }
+
   async function adimOlcumYuruyusu() {
     if (rehberRef.current) {
       sesliSoyele('Yol tarifi sürerken adım ölçümü yapılamaz. Vardığınızda ya da yönlendirmeyi kapatınca yeniden deneyin.');
@@ -1042,7 +1053,7 @@ export default function App() {
         'okutun ya da vardım deyin. Sonraki üç yürüyüşte adımlarınızı hızla yeniden ayarlayacağım.');
     };
     await konusVeBekle('Adım ölçümü. Açık havada, düz ve engelsiz bir yolun başında durun. Konumunuz alınıyor.');
-    const bas = await beklerkenBildir('Konum alınıyor.', konumAl(), 'Hâlâ konum alınıyor; açık havada olduğunuzdan emin olun.');
+    const bas = taze(await beklerkenBildir('Konum alınıyor.', konumAl(), 'Hâlâ konum alınıyor; açık havada olduğunuzdan emin olun.'));
     if (!bas || bas.dogruluk > 12) {
       hizliyaGec('Burada GPS yeterince hassas değil.');
       return;
@@ -1072,7 +1083,7 @@ export default function App() {
       return;
     }
     await konusVeBekle('Durun. Konumunuz alınıyor.');
-    const son = await beklerkenBildir('Konum alınıyor.', konumAl());
+    const son = taze(await beklerkenBildir('Konum alınıyor.', konumAl()));
     const sonuc = gpsAdimOlcumu(bas, son, sayilan);
     if ('hata' in sonuc) {
       hizliyaGec(sonuc.hata === 'gps' ? 'GPS konumu yeterince hassas alınamadı.'
@@ -1173,8 +1184,7 @@ export default function App() {
   async function gpsYakinNokta(): Promise<{nokta: string; metre: number} | null> {
     if (!mekan || rehber || !gpsliNoktaVar(mekan)) return null;
     const gps = await beklerkenBildir('Konum alınıyor.', konumAl());
-    if (!gps || Date.now() - gps.zaman > 60000) return null;   // eski (son bilinen) konum yanıltır
-    const yakin = gpsIleEnYakinNokta(mekan, gps);
+    const yakin = gpsIleEnYakinNokta(mekan, taze(gps));
     if (yakin && yakin.metre <= GPS_YAKIN) setKonumNoktasi(yakin.nokta);
     return yakin;
   }

@@ -55,7 +55,8 @@ const kutu = (f: NonNullable<YaziKutusu['frame']>): Kutu => ({x: f.left, y: f.to
 export function gorselIpucu(kutular: YaziKutusu[], boyut: {width: number; height: number}): GorselIpucu {
   for (const k of kutular) {
     const rakamlar = k.text.replace(/[\s-]/g, '');
-    if (/^\d+$/.test(rakamlar) && eanGecerli(rakamlar)) return {tur: 'barkod', deger: rakamlar};
+    // Yalnızca 12–13 hane: 8 haneli bir fiyat ya da tarih rastgele sağlama hanesini tutturup yanlış ürün aratmasın
+    if (/^\d{12,13}$/.test(rakamlar) && eanGecerli(rakamlar)) return {tur: 'barkod', deger: rakamlar};
   }
   const etiket = kutular.find(k => k.frame && /\bBAK\b|neredeyim|okutun/i.test(k.text));
   if (etiket?.frame) return {tur: 'yon', metin: kodYonu(kutu(etiket.frame), boyut, 'Etiket')};

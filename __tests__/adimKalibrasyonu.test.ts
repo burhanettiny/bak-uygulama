@@ -61,5 +61,6 @@ test('GPS kalibrasyon yürüyüşü: 80 adımda 56 m → 70 cm (standart); hassa
   const son48 = {...son56, enlem: 40.8 + 48 / 111195};            // kısa adım: 60 cm
   expect(gpsAdimOlcumu(bas, son48, 80)).toEqual({carpan: 1.17, adimCm: 60});
   expect(gpsAdimOlcumu(bas, {...son56, dogruluk: 25}, 80)).toEqual({hata: 'gps'});   // GPS hassas değil
+  expect(gpsAdimOlcumu({...bas, dogruluk: 10}, {...son56, dogruluk: 10}, 80)).toEqual({hata: 'gps'});   // toplam belirsizlik yola göre büyük
   expect(gpsAdimOlcumu(bas, {...bas, dogruluk: 5}, 80)).toEqual({hata: 'mesafe'});   // yürünmemiş / dönülmüş
 });

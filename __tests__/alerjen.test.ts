@@ -1,5 +1,5 @@
 import {
-  icindekilerBul, icindekilerdenAlerjenler, kisiselAlerjenCoz, kisiselEslesmeler,
+  eserBolumunuAyir, icindekilerBul, icindekilerdenAlerjenler, kisiselAlerjenCoz, kisiselEslesmeler,
 } from '../src/ayristirma/alerjen';
 import {urunSesliMetin} from '../src/ayristirma/urun';
 import {sesliKomutCoz} from '../src/ayristirma/komut';
@@ -51,4 +51,14 @@ test('sesli komutlar: alerjen, içindekiler, adım ölçümü', () => {
   expect(sesliKomutCoz('adımımı ölç')).toEqual({tur: 'adimOlc'});
   expect(sesliKomutCoz('adımlarım değişti')).toEqual({tur: 'adimOlc'});
   expect(sesliKomutCoz('adım ayarım ne')).toEqual({tur: 'adimAyari'});
+});
+
+test('"eser miktarda içerebilir" cümlesi kesin içerikten ayrılır', () => {
+  const {ana, eser} = eserBolumunuAyir('Buğday unu, şeker, kakao (%2.5), süt tozu. Eser miktarda fındık ve susam içerebilir.');
+  expect(ana).toBe('Buğday unu, şeker, kakao (%2.5), süt tozu');
+  expect(kisiselEslesmeler({ad: '', marka: '', icindekiler: 'Un, şeker. Eser miktarda fındık içerebilir.'} as any,
+    kisiselAlerjenCoz('fındık'))).toEqual({icerir: [], eser: ['fındık']});
+  expect(icindekilerdenAlerjenler(ana)).toEqual(['gluten', 'süt']);
+  expect(icindekilerdenAlerjenler(eser)).toEqual(['sert kabuklu yemiş', 'susam']);
+  expect(eserBolumunuAyir('Un, su, tuz').eser).toBe('');
 });

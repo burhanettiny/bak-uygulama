@@ -28,3 +28,7 @@ test('eksik barkod rakamları: yön; ilgisiz yazı: sessiz', () => {
     .toEqual({tur: 'yon', metin: 'Barkod görünüyor. Telefonu biraz sağa ve aşağı çevirin.'});
   expect(gorselIpucu([kutu('Tam yağlı süt', 300, 900)], BOYUT)).toBeNull();
 });
+
+test('8 haneli sayı (fiyat, tarih) sağlama hanesi tutsa da barkod sayılmaz', () => {
+  expect(gorselIpucu([kutu('96385074', 350, 900)], BOYUT)?.tur).not.toBe('barkod');
+});
