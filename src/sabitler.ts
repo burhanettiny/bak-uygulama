@@ -49,7 +49,9 @@ const OZELLIKLER = 'Özellikler: Barkod ve QR kod okuma. 4 farklı ürün verita
   'Girişteki QR ile mağaza, hastane, okul ve kurumlarda bina içi sesli yol tarifi; girişte oradaki yerlerin ' +
   'numaralı listesi; birden çok sonuçta seçenek sunma; kat, merdiven ve asansör yönlendirmesi; doktor ve oda arama; ' +
   'adım sayarla adım adım rehber; adım uzunluğunu etiketlerle, vardım deyince ve açık havada GPS ile ölçme; yön sapması uyarısı; kısa anlatım modu; ' +
-  'duvardaki etiketi bulmak için etiket arama. Kayboldum komutu; rehberden seçilen acil kişilere konum gönderme ve tek komutla arama. ' +
+  'duvardaki etiketi bulmak için etiket arama; koridor başı ve asansör önü gibi yerlerdeki neredeyim etiketleriyle yakındaki yerleri öğrenme; ' +
+  'kampüs gibi açık alanlarda GPS ile en yakın noktayı söyleme; kod ekranın kenarında ya da okunamıyorsa telefonu çevirme ve yaklaştırma yönlendirmesi. ' +
+  'Kayboldum komutu; rehberden seçilen acil kişilere konum gönderme ve tek komutla arama. ' +
   'İlk açılışta sesli eğitim. Kamerada fener. Dinlerken bip, sesiniz duyulunca titreşim, arama sürerken tık sesi. ' +
   `${EKRAN_OKUYUCU} uyumlu.`;
 const KISAYOLLAR = 'Sesli komut için ekrana uzun basın; yardım derseniz tüm komutlar okunur. Dokunuş kısayolları: ' +
@@ -87,6 +89,7 @@ export const EGITIM_ADIMLARI: {metin: string; beklenen: EgitimHareketi}[] = [
   {metin: 'Uzun basış sesli komut içindir. Bip sesini duyunca ya da titreşimi hissedince ne istediğinizi söyleyin; ' +
     'sesiniz duyulunca telefon kısaca titrer, bitince ikinci bir ses gelir. Örneğin barkod oku, ' +
     'mutfak nerede, sus ya da kayboldum. Bir binada hangi yerler olduğunu bilmiyorsanız neler var deyin. ' +
+    'Alerjeniniz varsa uzun basıp örneğin fıstık alerjim var deyin; o alerjeni içeren ürünü okuttuğunuzda önce sizi uyarırım. ' +
     'Tüm komutları duymak için uzun basıp yardım deyin. ' +
     'Acil durumda uzun basıp yardım çağır demeniz yeterli. Eğitim bitti. Ana ekrana geçmek için bir kez dokunun.', beklenen: 1},
 ];

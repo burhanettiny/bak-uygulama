@@ -50,7 +50,7 @@ export const KOMUT_YARDIMI =
   'yardım çağır, yardım numaram ve ardından numara, konumumu gönder ya da yerimi gönder, konumumu Ayşe’ye gönder, canlı konumumu paylaş, acil kişi ekle, annemi ara, ' +
   'sus, tekrarla, kısa anlat, uzun anlat, daha hızlı konuş, yavaş konuş, ' +
   'merdiven kullanma, merdiven kullan, adımlarım kısa, boyum 170, adım ayarım ne, adımımı ölç, adım sayarı kapat, yön uyarısını kapat, ' +
-  'fıstık alerjim var, alerjenlerim neler, içindekileri oku, ' +
+  'fıstık alerjim var, alerjenlerim neler, fıstığı alerjenlerimden çıkar, içindekileri oku, ' +
   'son taranan ürünler, ayarlar, eğitim, yönlendirmeyi kapat.';
 
 // Baştan sona eşleşir: "listede ne var" alışveriş listesi komutudur, bu değil

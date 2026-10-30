@@ -9,7 +9,7 @@ Kullanıcı soru sormadan çalışmamı istedi. Bitenler [x]; her madde test edi
 - [x] 2. Gizlilik politikası ve Play notları: konumun yeni kullanımları (adım ölçümü, kampüs konumu), kişisel
       alerjenler telefonda kalır, kamera görüntüsü (içindekiler, kod yönlendirmesi) kaydedilmez.
 - [x] 3. Başvuru: gerekçe (3000 karakter sınırı) ve kontrol listesine yeni özellikler.
-- [ ] 4. Eğitim, yardım ve Hakkında metinlerinin gözden geçirilmesi (yeni komutlar).
+- [x] 4. Eğitim, yardım ve Hakkında metinlerinin gözden geçirilmesi (yeni komutlar).
 - [ ] 5. Yeni kodun eleştirel incelemesi (alerjen, içindekiler, adım ölçümü, kod yönlendirmesi): kenar durumlar,
       TalkBack, pil/performans.
 - [ ] 6. Uzun videoya yeni özellikler (alerjen, adım ölçümü, yönlendirme) ve yeniden üretim.
