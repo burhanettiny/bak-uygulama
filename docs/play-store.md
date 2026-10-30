@@ -72,12 +72,18 @@ Kurumlar için: hastane, okul, market ve kamu binaları kendi BAK QR kodunu ücr
 - Kullanıcı verilerin silinmesini isteyebilir mi? Veriler yalnızca cihazda; uygulamayı silmek hepsini siler.
 
 **İzin gerekçeleri:** kamera (barkod/yazı okuma), mikrofon (sesli komut), fiziksel etkinlik (adım sayma),
-telefon araması (kullanıcının kaydettiği yardım numarası ve acil kişiler), konum (yalnızca "konumumu gönder"
-komutunda, tek seferlik, ön planda; arka plan konumu yok).
+telefon araması (kullanıcının kaydettiği yardım numarası ve acil kişiler), konum (yalnızca kullanıcının komutuyla, tek seferlik, ön planda: "konumumu gönder", "adımlarımı ölç" ve açık
+alanda "neredeyim"; arka plan konumu yok).
 
 **Veri güvenliği – konum:** Konum geliştiriciye gönderilmez. Kullanıcının isteğiyle, kendi seçtiği kişiye kendi SMS ya
 da WhatsApp uygulamasından gönderdiği mesajın içine yazılır. Play formunda "Konum: toplanmıyor" işaretlenebilir;
 kullanıcı tarafından başlatılan paylaşım olduğu açıklamaya yazılır. Rehber izni yoktur (Android kişi seçme ekranı).
+"Adımlarımı ölç" ve açık alanda "neredeyim" komutlarında konum yalnızca telefonda hesaplamaya girer (adım uzunluğu,
+haritadaki en yakın nokta), saklanmaz ve hiçbir yere gönderilmez.
+
+**Veri güvenliği – sağlık bilgisi sayılabilecek alerjenler:** Kullanıcının kaydettiği alerjenler yalnızca cihazda
+tutulur, ürün sorgusuna eklenmez; Play formunda "toplanmıyor". Kamera kareleri (içindekiler okuma, kod yönlendirmesi)
+yazı tanımadan sonra silinir.
 
 **İçerik derecelendirmesi:** anket "Yardımcı program / araç", şiddet, kumar vb. yok → 3+.
 

@@ -6,7 +6,7 @@ Kullanıcı soru sormadan çalışmamı istedi. Bitenler [x]; her madde test edi
 - [x] 1. Açık alanda GPS ile konum (kampüs): noktalara isteğe bağlı harita koordinatı (QR oluşturucu planı →
       QR'a `enlem`/`boylam`), Çizim'de koordinat girişi, Ardahan şablonuna OSM koordinatları; uygulamada
       "neredeyim" ve "kayboldum"da GPS'ten en yakın nokta (yalnızca dışarıda ve GPS hassasken).
-- [ ] 2. Gizlilik politikası ve Play notları: konumun yeni kullanımları (adım ölçümü, kampüs konumu), kişisel
+- [x] 2. Gizlilik politikası ve Play notları: konumun yeni kullanımları (adım ölçümü, kampüs konumu), kişisel
       alerjenler telefonda kalır, kamera görüntüsü (içindekiler, kod yönlendirmesi) kaydedilmez.
 - [ ] 3. Başvuru: gerekçe (3000 karakter sınırı) ve kontrol listesine yeni özellikler.
 - [ ] 4. Eğitim, yardım ve Hakkında metinlerinin gözden geçirilmesi (yeni komutlar).
