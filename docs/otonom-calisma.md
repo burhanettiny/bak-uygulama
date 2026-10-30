@@ -12,4 +12,4 @@ Kullanıcı soru sormadan çalışmamı istedi. Bitenler [x]; her madde test edi
 - [x] 4. Eğitim, yardım ve Hakkında metinlerinin gözden geçirilmesi (yeni komutlar).
 - [x] 5. Yeni kodun eleştirel incelemesi (alerjen, içindekiler, adım ölçümü, kod yönlendirmesi): kenar durumlar,
       TalkBack, pil/performans.
-- [ ] 6. Uzun videoya yeni özellikler (alerjen, adım ölçümü, yönlendirme) ve yeniden üretim.
+- [x] 6. Uzun videoya yeni özellikler (alerjen, adım ölçümü, yönlendirme) ve yeniden üretim.

@@ -3,7 +3,7 @@
 | Dosya | Süre | Not |
 |---|---|---|
 | `C:\Users\qurut\Videos\BAK\bak-kisa-video.mp4` | 19,4 sn | Tören videosu (sınır 20 sn) |
-| `C:\Users\qurut\Videos\BAK\bak-uzun-video.mp4` | 7 dk 10 sn | Jüri videosu (4–8 dk) |
+| `C:\Users\qurut\Videos\BAK\bak-uzun-video.mp4` | 7 dk 48 sn | Jüri videosu (4–8 dk) |
 | `bak-kisa-video.srt`, `bak-uzun-video.srt` | | YouTube'a yüklenecek altyazılar (sesle saniyesi saniyesine eşleşir) |
 
 ## Nasıl hazırlandı
