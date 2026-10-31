@@ -160,6 +160,7 @@ export default function App() {
   const cameraRef          = useRef<Camera>(null);
   const kameraAcilisRef    = useRef(0);
   const gorselMesgulRef    = useRef(false);
+  const qrZamaniRef        = useRef(0);   // son nokta QR'ının (ya da vardım'ın) okunduğu an
   const gorselYardimRef    = useRef<() => Promise<void>>(async () => {});
   const modRef             = useRef<Mod>('ana');   // kamerayı açan dokunuşların artığı kamerayı hemen kapatmasın
   const device             = useCameraDevice('back');
@@ -739,6 +740,7 @@ export default function App() {
     const kalibrasyonNotu = yeniMekan ? '' : adimiOlc(y, nokta);
     adimOlcumRef.current = {nokta, adim: 0};
     setKonumNoktasi(nokta);
+    qrZamaniRef.current = Date.now();
     sonuclariTemizle();
     setDurum(`📍 ${y.ad} — ${noktaAdi(y, nokta)}`);
 
@@ -810,6 +812,7 @@ export default function App() {
     const varis = varisIsle(mekan, nokta, duraklar, kacinilacak, tarifEtici(mekan))!;
     if (!varis.kalan.length) rehberAyarla(null);
     setKonumNoktasi(nokta);
+    qrZamaniRef.current = Date.now();
     setDuraklar(varis.kalan);
     Vibration.vibrate(TITRESIM.dokunusOnay);
     sesliSoyele(varis.metin + kalibrasyonNotu);
@@ -1187,6 +1190,11 @@ export default function App() {
   // Bina içinde ya da GPS zayıfken null döner; o zaman son okutulan QR noktası söylenir.
   async function gpsYakinNokta(): Promise<{nokta: string; metre: number} | null> {
     if (!mekan || rehber || !gpsliNoktaVar(mekan)) return null;
+    // QR az önce okutulduysa konum zaten kesin; son nokta bina içindeyse (haritada koordinatı yok) GPS büyük olasılıkla
+    // bulamaz ve kullanıcı boşuna bekler: o zaman yalnızca epey zaman geçtiyse (dışarı çıkmış olabilir) denenir
+    const gecen = Date.now() - qrZamaniRef.current;
+    const sonNokta = mekan.noktalar.find(n => n.id === konumNoktasi);
+    if (gecen < 2 * 60000 || (sonNokta && typeof sonNokta.enlem !== 'number' && gecen < 10 * 60000)) return null;
     const gps = await beklerkenBildir('Konum alınıyor.', konumAl());
     const yakin = gpsIleEnYakinNokta(mekan, taze(gps));
     if (yakin && yakin.metre <= GPS_YAKIN) setKonumNoktasi(yakin.nokta);
