@@ -17,10 +17,13 @@ export const TITRESIM = {
 
 // Haritadaki adım sayıları standart (yaklaşık 70 cm) adıma göredir. Dikkatli, kısa adımla yürüyen
 // kullanıcıda aynı mesafe daha çok adım tutar; sayılar bu çarpanla büyütülür.
+// Haritadaki mesafeler 70 cm'lik standart adımla saklanır; çarpan kullanıcının adımına çevirir (70 / adım cm).
+// Görme engelliler, özellikle bastonla, gören yürüyüşçülerden belirgin kısa adım atar (çoğunlukla 55–62 cm):
+// ölçüm yapılana kadar "normal" 60 cm sayılır. Rehberle yürüdükçe ya da "adımlarımı ölç" ile kişiye göre düzelir.
 export const ADIM_BOYLARI = [
-  {ad: 'kısa',   carpan: 1.4},
-  {ad: 'normal', carpan: 1},
-  {ad: 'uzun',   carpan: 0.8},
+  {ad: 'kısa',   carpan: 1.4,  cm: 50},
+  {ad: 'normal', carpan: 1.17, cm: 60},
+  {ad: 'uzun',   carpan: 1,    cm: 70},
 ];
 
 export const KONUSMA_HIZLARI = [

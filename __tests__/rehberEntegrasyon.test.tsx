@@ -39,6 +39,12 @@ async function adimAt(n: number) {
   }
 }
 
+// Rehber testleri 70 cm'lik standart adımla yazıldı ("uzun"); yeni kullanıcının varsayılanı 60 cm'dir (ADIM_BOYLARI)
+beforeEach(async () => {
+  const AsyncStorage = require('@react-native-async-storage/async-storage');
+  await AsyncStorage.setItem('ayar:adimBoyu', '2');
+});
+
 test('hastanede adım adım rehber: geri sayım, merdivende bekleme ve "devam"', async () => {
   const {useCameraDevice} = require('react-native-vision-camera');
   (useCameraDevice as jest.Mock).mockReturnValue({id: 'arka', hasTorch: true});

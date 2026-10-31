@@ -39,11 +39,12 @@ describe('boydan başlangıç ayarı', () => {
   });
 
   test('kısa boylu daha çok adım atar; sınırlar dışı boy reddedilir', () => {
-    expect(boydanCarpan(160)).toBeCloseTo(1.05, 2);
-    expect(boydanCarpan(185)).toBeCloseTo(0.91, 2);
+    expect(boydanCarpan(160)).toBeCloseTo(1.22, 2);
+    expect(boydanCarpan(185)).toBeCloseTo(1.05, 2);
     expect(boydanCarpan(70)).toBeNull();
     expect(boyCoz('boyum')).toBeNull();
-    expect(adimUzunluguCm(boydanCarpan(170))).toBe(71);
+    // Görme engelli yürüyüşü: 170 cm boyda ~61 cm (gören yürüyüşçüde ~71 cm olurdu)
+    expect(adimUzunluguCm(boydanCarpan(170)!)).toBe(61);
   });
 });
 
@@ -63,4 +64,13 @@ test('GPS kalibrasyon yürüyüşü: 80 adımda 56 m → 70 cm (standart); hassa
   expect(gpsAdimOlcumu(bas, {...son56, dogruluk: 25}, 80)).toEqual({hata: 'gps'});   // GPS hassas değil
   expect(gpsAdimOlcumu({...bas, dogruluk: 10}, {...son56, dogruluk: 10}, 80)).toEqual({hata: 'gps'});   // toplam belirsizlik yola göre büyük
   expect(gpsAdimOlcumu(bas, {...bas, dogruluk: 5}, 80)).toEqual({hata: 'mesafe'});   // yürünmemiş / dönülmüş
+});
+
+test('yeni kullanıcı görme engelli yürüyüşüne göre kısa adımla başlar', () => {
+  const {ADIM_BOYLARI} = require('../src/sabitler');
+  const {adimUzunluguCm} = require('../src/mekan/adimKalibrasyonu');
+  const normal = ADIM_BOYLARI.find((b: {ad: string}) => b.ad === 'normal');
+  expect(normal.cm).toBe(60);
+  expect(adimUzunluguCm(normal.carpan)).toBe(60);
+  for (const b of ADIM_BOYLARI) expect(adimUzunluguCm(b.carpan)).toBe(b.cm);
 });

@@ -33,12 +33,14 @@ export function carpaniGuncelle(eski: number, olcum: number, agirlik = NORMAL_AG
   return Math.round(Math.min(CARPAN_ARALIGI[1], Math.max(CARPAN_ARALIGI[0], yeni)) * 100) / 100;
 }
 
-// Ölçüm olmadan iyi bir başlangıç: adım uzunluğu boyun yaklaşık %41,5'idir (yürüme araştırmalarında yaygın
-// kullanılan oran). Haritadaki standart adım 70 cm: 160 cm boyda adım ~66 cm → çarpan ~1,05.
+// Ölçüm olmadan iyi bir başlangıç: gören yürüyüşçüde adım boyun yaklaşık %41,5'idir; görme engelliler (bastonla,
+// temkinli yürüyüşte) belirgin kısa adım attığı için yaklaşık %13 kısaltılır: boyun ~%36'sı. Haritadaki standart
+// adım 70 cm: 170 cm boyda adım ~61 cm → çarpan ~1,15. Rehberle yürüdükçe ölçümle kişiye göre düzelir.
 const STANDART_ADIM_CM = 70;
+export const BOY_ADIM_ORANI = 0.36;
 export function boydanCarpan(boyCm: number): number | null {
   if (!Number.isFinite(boyCm) || boyCm < 100 || boyCm > 220) return null;
-  const carpan = STANDART_ADIM_CM / (boyCm * 0.415);
+  const carpan = STANDART_ADIM_CM / (boyCm * BOY_ADIM_ORANI);
   return Math.round(Math.min(CARPAN_ARALIGI[1], Math.max(CARPAN_ARALIGI[0], carpan)) * 100) / 100;
 }
 

@@ -1016,7 +1016,8 @@ export default function App() {
     adimOlcumSayisiRef.current = 0;
     kayitYaz('ayar:adimOlcumSayisi', 0);
     Vibration.vibrate(TITRESIM.dokunusOnay);
-    sesliSoyele(`Adım boyu: ${ADIM_BOYLARI[index].ad}. Bir sonraki yol tarifinden itibaren adımlar buna göre sayılacak.`);
+    sesliSoyele(`Adım boyu: ${ADIM_BOYLARI[index].ad}, yaklaşık ${ADIM_BOYLARI[index].cm} santim. Bir sonraki yol ` +
+      'tarifinden itibaren adımlar buna göre sayılacak.');
   }
 
   // "boyum 170": ölçüm yokken iyi bir başlangıç; rehberle yürüdükçe QR'lar arası ölçümle düzeltilir
