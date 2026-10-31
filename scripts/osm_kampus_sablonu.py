@@ -333,8 +333,9 @@ noktalar = list({i: {"id": i, "ad": nokta_ad[n]} for n, i in nokta_id.items()}.v
 plan = {"konum": {nokta_id[n]: [round(konum[n][0] / 8, 1), round(konum[n][1] / 8, 1)] for n in nokta_id},
         # Çizim sayfası için modül türü: binalar "İçini aç" ile odalarıyla doldurulur
         "tur": {i: ("bina" if n in hedef_dugumleri else "kavsak") for n, i in nokta_id.items()},
-        # Gerçek harita koordinatı: telefondaki uygulama açık havada GPS'ten en yakın noktayı söyler
-        "gps": {i: [round(konum[n][1] / KY + LAT0, 6), round(konum[n][0] / KX + LON0, 6)] for n, i in nokta_id.items()}}
+        # Çizim haritaya oturtulmuş: (0, 0) kampüsün ortası, bir birim 8 m (= olcek adım × 0,7 m). Oluşturucu çizimin
+        # arkasında haritayı gösterir; telefondaki uygulama açık havada GPS'ten en yakın noktayı söyler.
+        "olcek": round(8 / ADIM_M, 4), "harita": {"enlem": round(LAT0, 6), "boylam": round(LON0, 6)}}
 mekan = {
     "sablonAdi": "Ardahan Üniversitesi Yenisey Kampüsü (OpenStreetMap yol ağından – sahada doğrulayın)",
     "id": "q-sablon", "ad": "Ardahan Üniversitesi Yenisey Kampüsü", "tur": "kurum", "surum": 1,
