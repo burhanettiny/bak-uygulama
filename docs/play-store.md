@@ -98,6 +98,24 @@ yazı tanımadan sonra silinir.
 - BAK görme engelliler için tasarlanmış bir erişilebilirlik aracı olduğu için `isAccessibilityTool` beyanı uygundur.
   Play bu beyan için kısa bir video isteyebilir: komut → ayarlarda hizmeti açma → canlı konumun paylaşılması.
 
+## Dahili test (birkaç kişiyle hemen)
+
+Play Koruma uyarısı ve Android'in "kısıtlanmış ayar" engeli olmadan, Play Store'dan kurulum. 12 kişi / 14 gün
+kuralı dahili test için geçerli değildir; en fazla 100 test kullanıcısı.
+
+1. Play Console → **Uygulama oluştur**: ad BAK, dil Türkçe, uygulama, ücretsiz.
+2. **Test ve yayınla → Test → Dahili test → Test kullanıcıları**: e-posta listesi oluşturun, kişilerin telefonda
+   kullandığı Gmail adreslerini ekleyin.
+3. **Yeni sürüm oluştur**: Play Uygulama İmzalama'yı kabul edin, `app-release.aab` yükleyin (`cd android &&
+   ./gradlew bundleRelease`, çıktı `app/build/outputs/bundle/release/`), **İncele → Yayınla**.
+4. Test kullanıcıları sekmesindeki **katılma bağlantısını** kişiye gönderin; telefonundaki Gmail hesabıyla açıp
+   "Test kullanıcısı ol" der, Play Store'dan kurar. İlk yayın birkaç saat sürebilir.
+5. Console eksik beyan isterse (gizlilik politikası adresi, veri güvenliği, erişilebilirlik API'si, hedef kitle)
+   yanıtlar bu dosyanın yukarısında.
+
+Her yeni yüklemede `android/app/build.gradle` içindeki `versionCode` bir artırılmalı (aynı numara reddedilir).
+İmza anahtarı (keystore) Play'de "yükleme anahtarı" olur: kaybolursa yeni sürüm yüklenemez, yedekleyin.
+
 ## Kişisel geliştirici hesabı kuralı
 
 Kasım 2023'ten sonra açılan kişisel Play geliştirici hesaplarında üretime çıkmadan önce **en az 12 test
