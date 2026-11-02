@@ -157,8 +157,10 @@ export function hedefBul(y: Mekan, metin: string, baslangic: string = y.giris): 
   // daha uzun olan "ebeveyn banyo" anahtarı kazanır. Eşitlikte aynı adlı yerlerden (her kattaki
   // tuvalet) en yakını seçilir; farklı adlı yerler eşitse ("poliklinik") kullanıcıya hangisi olduğu sorulur.
   const blokluMetin = blokKoduBirlestir(metin);
-  // Listede okunan kısa ad da anahtar sayılır: kullanıcı duyduğu adı söyler
-  const anahtarlari = (h: MekanHedefi) => (h.kisaAd ? [...h.anahtarlar, h.kisaAd] : h.anahtarlar);
+  // Listede okunan kısa ad ve yerin tam adı da anahtar sayılır: kullanıcı duyduğu adı söyler. Tam ad eşleşmesi en
+  // uzun eşleşme olduğundan "iktisadi ve idari bilimler fakültesi" ortak sözcüklü öbür fakültelerle karışmaz
+  // (QR oluşturucu tam adı ayrıca anahtar yazmaz, QR'a sığsın)
+  const anahtarlari = (h: MekanHedefi) => [...h.anahtarlar, h.ad, ...(h.kisaAd ? [h.kisaAd] : [])];
   let puanlar = y.hedefler.map(h => Math.max(
     eslesenAnahtarUzunlugu(anahtarlari(h), metin), eslesenAnahtarUzunlugu(anahtarlari(h), blokluMetin)));
   if (!puanlar.some(p => p > 0)) {
