@@ -163,7 +163,11 @@ export default function App() {
   const qrZamaniRef        = useRef(0);   // son nokta QR'ının (ya da vardım'ın) okunduğu an
   const gorselYardimRef    = useRef<() => Promise<void>>(async () => {});
   const modRef             = useRef<Mod>('ana');   // kamerayı açan dokunuşların artığı kamerayı hemen kapatmasın
-  const device             = useCameraDevice('back');
+  // Arka kamera yoksa (bazı tabletler, dış kameralı cihazlar) dış ya da ön kamera: hiç kamera bulamamaktan iyidir
+  const arkaKamera         = useCameraDevice('back');
+  const disKamera          = useCameraDevice('external');
+  const onKamera           = useCameraDevice('front');
+  const device             = arkaKamera ?? disKamera ?? onKamera;
   const kameraHazir        = !!device;
   const cokluDokunus       = useCokluDokunus();
 

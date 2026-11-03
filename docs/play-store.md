@@ -30,6 +30,9 @@ basıp ne istediğinizi söylemeniz yeterli.
 
 Alışverişte
 • Barkod ve QR kod okur; ürünün adını, markasını ve alerjenlerini söyler.
+• Kendi alerjeninizi bir kez söyleyin ("fıstık alerjim var"): o alerjen üründe varsa her şeyden önce uyarır.
+• Ambalajın arkasındaki içindekiler yazısını okur; "eser miktarda içerebilir" uyarısını ayrıca söyler.
+• Barkod kameranın kenarında kalırsa "biraz sola çevirin, yaklaştırın" diye yön tarif eder.
 • Son kullanma tarihini kendiliğinden bulur, tarihi geçmişse uyarır.
 • Türk lirası banknotları tanır, POS cihazındaki tutarı okur.
 • Sesli alışveriş listesi tutar; mağazada listeyi en kısa yoldan gezdirir.
@@ -38,16 +41,24 @@ Binalarda
 • Girişteki BAK QR kodunu okutunca binadaki yerleri sayar: danışma, vezne, poliklinikler, sınıflar, reyonlar.
 • "Kardiyoloji nerede", "Doktor Ayşe Yılmaz", "112 numaralı oda" deyin; kat, merdiven ve asansör dahil adım adım
   yol tarif eder.
-• Adımlarınızı sayar, dönüşleri zamanında söyler, yönünüzden saparsanız uyarır. Adım uzunluğunuzu kendisi öğrenir.
-• Kayboldum deyince nerede olduğunuzu söyler; "yardım çağır" deyince kayıtlı yakınınızı arar.
+• Adımlarınızı sayar, dönüşleri zamanında söyler, yönünüzden saparsanız uyarır.
+• Adım uzunluğunuzu yürüdükçe kendisi öğrenir; isterseniz açık havada 80 adım yürüyerek ölçtürürsünüz.
+• Koridor ve asansör önündeki "neredeyim" etiketlerini okutunca bulunduğunuz yeri ve yakındaki yerleri söyler.
+• Kampüs gibi açık alanlarda "neredeyim" denince GPS ile en yakın binayı söyler.
+
+Güvenlikte
+• "Kayboldum" deyince nerede olduğunuzu ve en yakın etiketi nasıl bulacağınızı anlatır.
+• "Yardım çağır" kayıtlı yakınınızı arar.
+• "Konumumu gönder" bulunduğunuz yeri yakınınıza WhatsApp'tan iletir; canlı konumu da paylaşabilir.
 
 Kullanımı kolay
 • Bir dokunuş susturur, iki dokunuş barkod okur, üç dokunuş yol tarifi ister, uzun basış sesli komut.
-• TalkBack ile tam uyumlu; yüksek kontrastlı, büyük yazılı ekran.
-• İlk açılışta sesli eğitim.
-• Hesap, reklam ve kullanım takibi yoktur.
+• Sesiniz duyulunca telefon kısaca titrer; ürün aranırken bunu sesle bildirir.
+• TalkBack ile tam uyumlu; yüksek kontrastlı, büyük yazılı ekran. İlk açılışta sesli eğitim.
+• Hesap, reklam ve kullanım takibi yoktur; bilgileriniz telefonunuzda kalır.
 
-Kurumlar için: hastane, okul, market ve kamu binaları kendi BAK QR kodunu ücretsiz oluşturabilir.
+Kurumlar için: hastane, okul, market, AVM, kampüs ve kamu binaları kendi BAK QR kodunu
+https://bakmekan.streamlit.app adresinde ücretsiz oluşturabilir.
 
 **Kategori:** Araçlar · **Etiketler:** Erişilebilirlik, Alışveriş
 **İletişim e-postası:** mailtoburhanettin@gmail.com
