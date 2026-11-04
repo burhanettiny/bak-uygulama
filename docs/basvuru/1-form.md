@@ -18,7 +18,7 @@ Sorular: info@engelsizbilisim.org · 0532 707 76 74
 |---|---|
 | Adayın/çalışmanın adı | BAK – Görme Engelliler İçin Sesli Alışveriş ve Yol Tarifi Asistanı |
 | Kategori | **Engelsiz Bilişim Sosyal Sorumluluk Projesi Ödülü** (öğrenciyseniz: Öğrenci Projesi Ödülü) |
-| Aday gösterme gerekçesi | `gerekce.txt` dosyasının tamamı (yaklaşık 2880 karakter; sınır 200–3000). Sondaki köşeli parantezi (yaklaşık 50 karakter) en fazla 170 karakterlik test kullanıcısı / pilot kurum bilgisiyle değiştirin ya da silin. |
+| Aday gösterme gerekçesi | `gerekce.txt` dosyasının tamamı (2926 karakter; sınır 200–3000). Olduğu gibi yapıştırın. |
 
 Kategori notu: "Jüri Özel Ödülü" formun listesinde yok. Özel Sektör, Kamu Hizmet ve Medya kurum başvuruları içindir;
 Eğitim Ödülü eğitim içeriğine yöneliktir. Bireysel, ücretsiz ve toplum yararına bir çalışma olarak en uygun kategori
