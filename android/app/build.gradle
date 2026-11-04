@@ -20,8 +20,8 @@ android {
         applicationId "tr.bak"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0.0"   // src/sabitler.ts SURUM ile aynı tutulmalı
+        versionCode 2
+        versionName "1.0.1"   // src/sabitler.ts SURUM ile aynı tutulmalı
     }
 
     signingConfigs {

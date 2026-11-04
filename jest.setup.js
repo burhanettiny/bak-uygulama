@@ -7,6 +7,8 @@ jest.mock('react-native-tts', () => ({
   setDefaultRate: jest.fn(),
   getInitStatus: jest.fn(() => Promise.resolve(true)),
   requestInstallEngine: jest.fn(),
+  engines: jest.fn(() => Promise.resolve([])),
+  setDefaultEngine: jest.fn(() => Promise.resolve(true)),
   speak: jest.fn(),
   stop: jest.fn(() => Promise.resolve(true)),
   // Gerçek kütüphanedeki gibi abonelik döndürür. removeEventListener bilerek yok: gerçekte çağrılınca

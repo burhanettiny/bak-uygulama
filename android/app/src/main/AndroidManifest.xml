@@ -29,6 +29,12 @@
         <intent>
             <action android:name="android.speech.RecognitionService" />
         </intent>
+        <!-- Telefondaki metin okuma motorları: varsayılan motor Türkçe bilmiyorsa Türkçe bilen başka bir motora
+             (çoğunlukla Google'ın sesi) geçebilmek için -->
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+        <package android:name="com.google.android.tts" />
         <!-- "Canlı konumumu paylaş": WhatsApp sohbetini doğrudan açmak için -->
         <package android:name="com.whatsapp" />
         <package android:name="com.whatsapp.w4b" />

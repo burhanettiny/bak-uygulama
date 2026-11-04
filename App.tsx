@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {Alert, BackHandler, Platform, Vibration} from 'react-native';
+import {Alert, BackHandler, Linking, Platform, Vibration} from 'react-native';
 import Tts from 'react-native-tts';
 import {Camera, useCameraDevice, useCodeScanner} from 'react-native-vision-camera';
 import TextRecognition from '@react-native-ml-kit/text-recognition';
@@ -202,7 +202,7 @@ export default function App() {
     });
     // Android'de TTS motoru hazır olmadan konuşma isteği sessizce kaybolur
     Tts.getInitStatus()
-      .then(() => Tts.setDefaultLanguage('tr-TR').catch(turkceSesEksik))
+      .then(turkceSesiHazirla)
       .then(() => kayitOku<boolean>('egitimTamam', false))
       .then(tamam => {
         if (!tamam) egitimiBaslat();
@@ -309,15 +309,61 @@ export default function App() {
     return () => abonelik.remove();
   }, [mod, dinleniyor]);
 
-  // Türkçe ses verisi yoksa uygulama yanlış dilde konuşur ya da hiç konuşmaz.
-  // Uyarı TalkBack tarafından okunur; Android'in ses verisi indirme ekranı da açılır.
-  function turkceSesEksik(err: {code?: string}) {
+  // Türkçe ses: telefonun varsayılan metin okuma motoru Türkçe bilmiyorsa (bazı Huawei, Samsung, Xiaomi
+  // telefonlarda böyledir) telefondaki öbür motorlar denenir; Türkçe bilen varsa (çoğunlukla Google'ın sesi)
+  // uygulama onunla konuşur. Hiçbiri bilmiyorsa yardımcıya tek dokunuşla indirme yolu gösterilir.
+  const GOOGLE_SES = 'com.google.android.tts';
+  async function turkceSesiHazirla() {
+    let ilkHata: {code?: string} = {};
+    try {
+      await Tts.setDefaultLanguage('tr-TR');
+      return;
+    } catch (e) {
+      ilkHata = e as {code?: string};
+    }
+    let googleVar = false;
+    if (Platform.OS === 'android') {
+      try {
+        const motorlar = await Tts.engines();
+        googleVar = motorlar.some(m => m.name === GOOGLE_SES);
+        const sira = [...motorlar.filter(m => m.name === GOOGLE_SES), ...motorlar.filter(m => m.name !== GOOGLE_SES)]
+          .filter(m => !m.default);
+        for (const m of sira) {
+          try {
+            await Tts.setDefaultEngine(m.name);
+            await Tts.getInitStatus();
+            await Tts.setDefaultLanguage('tr-TR');
+            return;   // bu motor Türkçe konuşuyor
+          } catch {
+            // sıradaki motor
+          }
+        }
+      } catch {
+        // motor listesi alınamadı
+      }
+    }
+    turkceSesEksik(ilkHata, googleVar);
+  }
+
+  // Uygulama konuşamadığı için uyarı yazılı (TalkBack okur) ve titreşimle verilir; düğmeler Android'in ses
+  // indirme ekranını ya da Google'ın ses motorunun Play Store sayfasını açar
+  function turkceSesEksik(err: {code?: string}, googleVar = true) {
     setDurum('⚠️ Türkçe ses verisi yüklü değil');
+    Vibration.vibrate([0, 600, 300, 600, 300, 600]);
     if (err?.code === 'lang_missing_data') Tts.requestInstallData().catch(() => {});
     Alert.alert(
       'Türkçe ses eksik',
-      'Telefonunuzda Türkçe metin okuma sesi yüklü değil. Ayarlar → Erişilebilirlik → Metin okuma çıkışı bölümünden Türkçe ses verisini indirin.',
-      [{text: 'Tamam'}],
+      'BAK konuşmak için telefonun Türkçe metin okuma sesine ihtiyaç duyar; bu telefonda yüklü değil. ' +
+        (googleVar
+          ? '"Türkçe sesi indir"e dokunup Türkçe ses verisini indirin, sonra BAK\'ı yeniden açın.'
+          : 'Önce "Google ses motorunu yükle"ye dokunup Google\'ın Konuşma Hizmetleri uygulamasını yükleyin, sonra ' +
+            'BAK\'ı yeniden açın.'),
+      [
+        ...(googleVar ? [] : [{text: 'Google ses motorunu yükle',
+          onPress: () => { Linking.openURL(`market://details?id=${GOOGLE_SES}`).catch(() => {}); }}]),
+        {text: 'Türkçe sesi indir', onPress: () => { Tts.requestInstallData().catch(() => {}); }},
+        {text: 'Kapat', style: 'cancel'},
+      ],
     );
   }
 
