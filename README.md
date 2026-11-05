@@ -1,97 +1,52 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# BAK: Görmeden de, sormadan da yolunu bul
 
-# Getting Started
+BAK, görme engelli bireyler için geliştirilmiş ücretsiz bir **sesli alışveriş ve bina içi yol tarifi asistanıdır**.
+Telefonun kamerası görür, uygulama sesle anlatır ve kullanıcıyı adım adım götürür. Ekrana bakmadan, dokunuş
+hareketleri ve sesli komutlarla kullanılır; TalkBack ile uyumludur.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+- **Ürün, tarih, para:** barkoddan ürün adı, markası ve alerjenleri; son kullanma tarihi (geçmişse uyarı);
+  banknot değeri ve POS cihazındaki tutar. Barkod kameranın kenarında kalırsa telefonu hangi yöne çevireceğini söyler.
+- **Bina içi yol tarifi:** girişteki QR etiketi okutulunca binadaki yerler numaralı okunur; kullanıcı numarayı ya da
+  adı söyler, uygulama adımları sayarak, her köşede geliş yönüne göre "sağa, sola, düz" diye tarif eder. Yoldaki
+  küçük etiketler "neredeyim?" sorusunu cevaplar. Adım uzunluğu yürüdükçe kişiye göre öğrenilir.
+- **Acil durum:** "Yardım çağır" kayıtlı yakını arar; "Yerimi gönder" bina, kat ve noktayı (dışarıdaysa harita
+  bağlantısını) WhatsApp'tan iletir; canlı konum bir saat boyunca kendiliğinden güncellenir.
+- **Gizlilik:** hesap istemez, reklam ve takip içermez. Bilgiler telefonda kalır; okutulan binalar sonra
+  internetsiz de çalışır.
 
-## Step 1: Start Metro
+## Kurumlar için
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+Hastane, market, okul, belediye gibi kurumlar kendi BAK etiketlerini ücretsiz
+[QR oluşturucu](https://bakmekan.streamlit.app) ile hazırlar; kampüsler OpenStreetMap'ten otomatik kurulur.
+Oluşturucu ve yayınlanan bina planları ayrı bir depodadır:
+[burhanettiny/bak-mekanlar](https://github.com/burhanettiny/bak-mekanlar).
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## Geliştirme
 
-```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+React Native 0.85, TypeScript. Android'de çalışır; iPhone sürümü hazırlanıyor ([docs/iphone.md](docs/iphone.md)).
 
 ```sh
-bundle install
+npm install          # patch-package yamaları da uygulanır (patches/)
+npm test             # otomatik testler
+npm run android      # bağlı telefonda ya da emülatörde çalıştırır
 ```
 
-Then, and every time you update your native dependencies, run:
+| Klasör | İçerik |
+|---|---|
+| `App.tsx` | Ana akış: dokunuş hareketleri, sesli komutlar, kamera, konuşma |
+| `src/ekranlar`, `src/bilesenler` | Ekranlar ve bileşenler |
+| `src/ayristirma` | Ürün, tarih, para, alerjen, komut ve konum mesajı çözümleme |
+| `src/mekan` | Bina planı, yol bulma, sesli tarif, adım kalibrasyonu |
+| `src/servisler` | Ürün veritabanı, plan indirme, ses, titreşim, adım sayar |
+| `__tests__` | Jest testleri |
+| `docs` | Play Store, iPhone ve başvuru belgeleri |
 
-```sh
-bundle exec pod install
-```
+Yayın imzası depoda değildir; `android/app/build.gradle` onu kullanıcının `~/.gradle/gradle.properties`
+dosyasından okur.
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+## Lisans
 
-```sh
-# Using npm
-npm run ios
+[MIT](LICENSE) © 2026 Burhanettin Yalçınkaya. Kampüs haritaları
+[OpenStreetMap katkıcılarının](https://www.openstreetmap.org/copyright) verisiyle (ODbL) hazırlanır.
 
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+İletişim: mailtoburhanettin@gmail.com
