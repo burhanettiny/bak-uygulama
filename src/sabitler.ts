@@ -62,7 +62,7 @@ const KISAYOLLAR = 'Sesli komut için ekrana uzun basın; yardım derseniz tüm 
   '3 kez dokun, yol tarifi. Son kullanma tarihi, para, POS tutarı ve alışveriş listesi için uzun basıp söyleyin ' +
   'ya da ekrandaki butonları kullanın. Kamera açıkken uzun bas, feneri aç veya kapat.';
 const GELISTIRICI = 'Geliştirici: Burhanettin Yalçınkaya. E-posta: mailtoburhanettin at gmail nokta com.';
-export const SURUM = '1.0.1';
+export const SURUM = '1.0.2';
 export const GIZLILIK_ADRESI = 'https://burhanettiny.github.io/bak-mekanlar/gizlilik.html';
 const VERSIYON = `Versiyon ${SURUM}. 2026 BAK, tüm hakları saklıdır.`;
 
