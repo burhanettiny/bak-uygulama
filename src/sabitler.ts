@@ -64,7 +64,8 @@ const KISAYOLLAR = 'Sesli komut için ekrana uzun basın; yardım derseniz tüm 
 const GELISTIRICI = 'Geliştirici: Burhanettin Yalçınkaya. E-posta: mailtoburhanettin at gmail nokta com.';
 export const SURUM = '1.0.2';
 export const GIZLILIK_ADRESI = 'https://burhanettiny.github.io/bak-mekanlar/gizlilik.html';
-const VERSIYON = `Versiyon ${SURUM}. 2026 BAK, tüm hakları saklıdır.`;
+const VERSIYON = `Versiyon ${SURUM}. 2026 BAK, tüm hakları saklıdır. ` +
+  'Kampüs haritaları OpenStreetMap katkıcılarının verisiyle hazırlanır.';
 
 export const HAKKINDA_METINLER = {
   ozet:       'BAK. Görme engelliler için sesli alışveriş ve yol tarifi asistanı.',
